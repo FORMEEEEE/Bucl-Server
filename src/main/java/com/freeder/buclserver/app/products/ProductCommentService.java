@@ -33,16 +33,14 @@ public class ProductCommentService {
         List<ProductComment> byProduct = productCommentRepository.findByProduct(product, PageUtil.paging(page, pageSize))
                 .orElseThrow(() -> new BaseException(HttpStatus.BAD_REQUEST, 400, "잘못된ProductId 또는 댓글이 없습니다.")).toList();
 
-        Object[] counts = productCommentRepository.getCounts(productId).get(0);
+//        Object[] counts = productCommentRepository.getCounts(productId).get(0);
 
         List<CommentsDto> list = byProduct.stream()
                 .map(CommentsDto::setDto)
                 .toList();
 
-        ProductCommentDto<List<CommentsDto>> listProductCommentDto = new ProductCommentDto<>(counts[0], counts[1], list);
-
         return new BaseResponse<>(
-                listProductCommentDto,
+                list,
                 HttpStatus.OK,
                 "실시간댓글 전송성공."
         );

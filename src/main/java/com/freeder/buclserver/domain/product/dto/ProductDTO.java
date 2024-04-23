@@ -6,7 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ProductDTO {
-
 	private Long productCode;
 	private String name;
 	private String brandName;
@@ -15,5 +14,7 @@ public class ProductDTO {
 	private int consumerPrice;
 	private float reward;
 	private boolean wished;
+	private Object listCount;
+	private Object suggestionCount;
 }
 
