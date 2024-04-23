@@ -1,9 +1,11 @@
 package com.freeder.buclserver.app.rewards;
 
 import com.freeder.buclserver.domain.openbanking.dto.OpenBankingAccessTokenDto;
+import com.freeder.buclserver.domain.openbanking.dto.ReqApiDto;
 import com.freeder.buclserver.global.exception.BaseException;
 import com.freeder.buclserver.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,11 +30,11 @@ public class RewardsAccountController {
 		}
 	}
 
-	@PostMapping("/token")
-	public BaseResponse<OpenBankingAccessTokenDto> requestOpenApiAccessToken(@RequestParam String code) {
+	@PostMapping("/accountvalid")
+	public BaseResponse<?> requestOpenApiAccessToken(@Valid @RequestBody ReqApiDto reqApiDto) {
 		try {
-			OpenBankingAccessTokenDto accessToken = openBankingService.requestOpenApiAccessToken(code);
-			return new BaseResponse<>(accessToken, HttpStatus.OK, "Success");
+			boolean result = openBankingService.requestOpenApiAccessToken(reqApiDto);
+			return new BaseResponse<>(result, HttpStatus.OK, "계좌본인인증성공");
 		} catch (Exception e) {
 			throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, 500, e.getMessage());
 		}

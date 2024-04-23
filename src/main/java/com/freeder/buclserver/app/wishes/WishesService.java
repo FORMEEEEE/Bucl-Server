@@ -1,6 +1,7 @@
 package com.freeder.buclserver.app.wishes;
 
 import com.freeder.buclserver.app.products.ProductsCategoryService;
+import com.freeder.buclserver.core.security.CustomUserDetails;
 import com.freeder.buclserver.domain.grouporder.entity.GroupOrder;
 import com.freeder.buclserver.domain.grouporder.repository.GroupOrderRepository;
 import com.freeder.buclserver.domain.product.entity.Product;
@@ -35,12 +36,12 @@ public class WishesService {
     private final ImageParsing imageParsing;
 
     public BaseResponse<?> getWishesList(
-            Authentication authentication,
+            CustomUserDetails userDetails,
             int page,
             int pageSize
     ) {
 
-        Page<Wish> wishes = wishRepository.findByUserId((Long) authentication.getPrincipal(), setPaging(page, pageSize)).orElseThrow(() ->
+        Page<Wish> wishes = wishRepository.findByUserId(Long.valueOf(userDetails.getUserId()), setPaging(page, pageSize)).orElseThrow(() ->
                 new BaseException(HttpStatus.BAD_REQUEST, 400, "잘못된 userId 또는 찜목록이 없습니다."));
 
         List<WishDto> list = wishes.getContent().stream()
@@ -56,13 +57,13 @@ public class WishesService {
 
     @Transactional
     public BaseResponse<?> saveWish(
-            Authentication authentication,
+            CustomUserDetails userDetails,
             WishDto.WishCreateReq wishCreateReq
     ) {
 
         return new BaseResponse<>(
                 WishCreateRes(
-                        authentication,
+                        userDetails,
                         wishCreateReq
                 ),
                 HttpStatus.OK,
@@ -72,13 +73,13 @@ public class WishesService {
 
     @Transactional
     public BaseResponse<?> deleteWish(
-            Authentication authentication,
+            CustomUserDetails userDetails,
             Long productCode
     ) {
 
         try {
             wishRepository.deleteByUser_IdAndProduct_ProductCode(
-                    (Long) authentication.getPrincipal(),
+                    Long.valueOf(userDetails.getUserId()),
                     productCode
             );
         } catch (Exception e) {
@@ -97,17 +98,17 @@ public class WishesService {
 
 
     private WishDto convertWishDto(Wish wish) {
+
+        GroupOrder groupOrder = groupOrderRepository.findByProduct_Id(wish.getProduct().getId()).orElseThrow(() ->
+                new BaseException(HttpStatus.BAD_REQUEST, 400, "잘못된상품ID")
+        );
+
         try {
-
-            GroupOrder groupOrder = groupOrderRepository.findByProduct_Id(wish.getProduct().getId()).orElseThrow(() ->
-                    new BaseException(HttpStatus.BAD_REQUEST, 400, "잘못된상품ID")
-            );
-
             return WishDto.builder()
                     .brandName(wish.getProduct().getBrandName())
                     .name(wish.getProduct().getName())
-                    .productCode(wish.getProduct().getProductCode())
-                    .imagePath(imageParsing.getImageList(wish.getProduct().getImagePath()))
+                    .productCode(Objects.requireNonNull(wish.getProduct().getProductCode()))
+                    .imagePath(Objects.requireNonNull(imageParsing.getImageList(wish.getProduct().getImagePath())))
                     .consumerPrice(wish.getProduct().getConsumerPrice())
                     .starRate(productsCategoryService.calculateAverageRating(wish.getProduct().getProductReviews()))
                     .consumerOrdersNumber(wish.getProduct().getConsumerOrders().size())
@@ -120,7 +121,7 @@ public class WishesService {
     }
 
     private WishDto.WishCreateRes WishCreateRes(
-            Authentication authentication,
+            CustomUserDetails userDetails,
             WishDto.WishCreateReq wishCreateReq
     ) {
 
@@ -130,7 +131,7 @@ public class WishesService {
                                 Wish.builder()
                                         .user(
                                                 User.builder()
-                                                        .id((Long) authentication.getPrincipal())
+                                                        .id(Long.valueOf(userDetails.getUserId()))
                                                         .build()
                                         )
                                         .product(

@@ -2,7 +2,7 @@ package com.freeder.buclserver.app.auth.controller;
 
 
 
-import com.freeder.buclserver.global.openfeign.kakao.KakaoApiClient;
+import com.freeder.buclserver.global.webclient.KakaoApiClient;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
 	private final JwtTokenService jwtTokenService;
-	//private final KakaoApiClient kakaoApiClient;
+	private final KakaoApiClient kakaoApiClient;
 	private final MyService myService;
 
 	@Value("${bucl.service.auth.COOKIE-MAX-AGE-ACCESS-TOKEN}")
@@ -42,20 +42,20 @@ public class AuthController {
 	@Value("${bucl.service.auth.COOKIE-MAX-AGE-REFRESH_TOKEN}")
 	private int COOKIE_MAX_AGE_REFRESH_TOKEN;
 
-//	@PostMapping("/login/kakao")
-//	public BaseResponse kakaoLogin(@Valid @RequestBody KakaoLoginRequest request, HttpServletResponse response) {
-//		KakaoUserInfoResponse userInfo = kakaoApiClient.getUserInfo("Bearer " + request.kakaoAccessToken());
-//
-//		UserDto userDto = myService.findBySocialIdAndDeletedAtIsNull(userInfo.getId())
-//				.orElseGet(() -> myService.join(userInfo.toUserDto()));
-//
-//		TokenResponse tokens = jwtTokenService.createJwtTokens(userDto.id(), userDto.role());
-//
-//		response.addCookie(createCookie("access-token", tokens.accessToken(), COOKIE_MAX_AGE_ACCESS_TOKEN));
-//		response.addCookie(createCookie("refresh-token", tokens.refreshToken(), COOKIE_MAX_AGE_REFRESH_TOKEN));
-//
-//		return new BaseResponse(null, HttpStatus.OK, "요청 성공");
-//	}
+	@PostMapping("/login/kakao")
+	public BaseResponse kakaoLogin(@Valid @RequestBody KakaoLoginRequest request, HttpServletResponse response) {
+		KakaoUserInfoResponse userInfo = kakaoApiClient.kakaoGetUser(request.kakaoAccessToken()).block();
+
+		UserDto userDto = myService.findBySocialIdAndDeletedAtIsNull(userInfo.getId())
+				.orElseGet(() -> myService.join(userInfo.toUserDto()));
+
+		TokenResponse tokens = jwtTokenService.createJwtTokens(userDto.id(), userDto.role());
+
+		response.addCookie(createCookie("access-token", tokens.accessToken(), COOKIE_MAX_AGE_ACCESS_TOKEN));
+		response.addCookie(createCookie("refresh-token", tokens.refreshToken(), COOKIE_MAX_AGE_REFRESH_TOKEN));
+
+		return new BaseResponse(null, HttpStatus.OK, "요청 성공");
+	}
 
 	@PostMapping("/renewal/tokens")
 	public BaseResponse renewTokens(@Valid @RequestBody RefreshTokenRequest request, HttpServletResponse response) {

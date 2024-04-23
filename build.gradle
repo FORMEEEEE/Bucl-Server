@@ -26,11 +26,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+//    runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.4.0'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0'
@@ -50,7 +52,16 @@ dependencies {
     // portone api 의존성
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.22'
 
+    //쿼리DSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
+}
 
+clean {
+    delete file('src/main/generated')
 }
 
 allprojects {

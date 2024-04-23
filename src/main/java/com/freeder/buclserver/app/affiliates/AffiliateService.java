@@ -1,6 +1,8 @@
 package com.freeder.buclserver.app.affiliates;
 
+import com.freeder.buclserver.core.security.CustomUserDetails;
 import com.freeder.buclserver.domain.affiliate.dto.AffiliateDto;
+import com.freeder.buclserver.domain.affiliate.dto.AffiliateReqDto;
 import com.freeder.buclserver.domain.affiliate.dto.SellingDto;
 import com.freeder.buclserver.domain.product.entity.Product;
 import com.freeder.buclserver.domain.product.repository.ProductRepository;
@@ -25,16 +27,16 @@ public class AffiliateService {
     private Long expireTime = -1L;
 
     public BaseResponse<?> getSellingPage(
-            Authentication authentication,
-            AffiliateDto affiliateDto
+            CustomUserDetails userDetails,
+            AffiliateReqDto affiliateReqDto
     ) throws Exception {
 
         return new BaseResponse<>(
                 convertSellingDto(
-                        productRepository.findByIdForAffiliate(affiliateDto.getProductId()).orElseThrow(() ->
-                                new BaseException(HttpStatus.BAD_REQUEST,400,"잘못된productID")
+                        productRepository.findByIdForAffiliate(affiliateReqDto.productId()).orElseThrow(() ->
+                                new BaseException(HttpStatus.BAD_REQUEST, 400, "잘못된productID")
                         ),
-                        createAffiliateUrl(authentication, affiliateDto)
+                        createAffiliateUrl(userDetails, affiliateReqDto)
                 ),
                 HttpStatus.OK,
                 "요청 성공"
@@ -70,16 +72,14 @@ public class AffiliateService {
     }
 
     private String createAffiliateUrl(
-            Authentication authentication,
-            AffiliateDto affiliateDto
+            CustomUserDetails userDetails,
+            AffiliateReqDto affiliateReqDto
     ) throws Exception {
-        return cryptoAes256.encrypt(
-                String.format(
-                        "%d,%s,%d",
-                        affiliateDto.getProductId(),
-                        authentication.getPrincipal(),
-                        DateUtils.nowDate())
-        );
+        return cryptoAes256.encrypt(String.format(
+                "%d,%s,%d",
+                affiliateReqDto.productId(),
+                userDetails.getUserId(),
+                DateUtils.nowDate()));
     }
 
     private String[] validUrl(String affiliateEncrypt) {
@@ -107,6 +107,8 @@ public class AffiliateService {
             String productId,
             String userId
     ) {
+        System.out.println(productId);
+        System.out.println(userId);
         return AffiliateDto.builder()
                 .productId(Long.valueOf(productId))
                 .userId(Long.valueOf(userId))
