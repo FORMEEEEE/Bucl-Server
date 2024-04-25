@@ -84,7 +84,7 @@ public class OpenBankingService {
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("client_id", clientId);
             body.add("client_secret", clientSecret);
-            body.add("scope", "oob");
+            body.add("scope", "sa");
             body.add("grant_type", "client_credentials");
 
             String now = LocalDateTime.now(ZoneId.of("Asia/Seoul")).toString();
@@ -138,10 +138,10 @@ public class OpenBankingService {
             ReqApiDto reqApiDto,
             OpenBankingAccountValidDto openBankingAccountValidDto
     ) {
-		if (openBankingAccountValidDto.account_holder_name().equals(reqApiDto.name())){
+		if (!openBankingAccountValidDto.account_holder_name().equals(reqApiDto.name())){
             throw new BaseException(HttpStatus.BAD_REQUEST,400,"계좌 실명이 다릅니다.");
         }
-        if (openBankingAccountValidDto.account_holder_info().equals(reqApiDto.account())){
+        if (!openBankingAccountValidDto.account_holder_info().equals(reqApiDto.birth())){
             throw new BaseException(HttpStatus.BAD_REQUEST,400,"계좌 생년월일이 다릅니다.");
         }
 

@@ -11,6 +11,7 @@ import com.freeder.buclserver.global.util.DateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,12 +26,14 @@ import java.util.concurrent.TimeoutException;
 @RequiredArgsConstructor
 @Slf4j
 public class OpenApiClient {
+    @Value("${openbanking.api.base-url}")
+    private String openBankingApiBaseUrl;
     private WebClient webClient;
 
     @PostConstruct
     public void init() {
         this.webClient = WebClient.builder()
-                .baseUrl("https://openapi.openbanking.or.kr")
+                .baseUrl(openBankingApiBaseUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @SpringBootTest
 class BuclServerApplicationTests {
@@ -52,8 +53,12 @@ class BuclServerApplicationTests {
         product.setId(1L);
         Optional<Page<ProductComment>> byProduct = productCommentRepository.findByProduct(product, PageUtil.paging(1, 10));
         List<ProductComment> content = byProduct.get().getContent();
+    }
 
-
-
+    @Test
+    void random(){
+        if ("홍길동".equals("김말똥")){
+            System.out.println("aaaaa");
+        }
     }
 }

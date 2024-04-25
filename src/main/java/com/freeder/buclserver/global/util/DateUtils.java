@@ -12,7 +12,7 @@ public class DateUtils {
     }
 
     public static String nowDateString() {
-        return new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     }
 
     public static String convertDate(LocalDateTime time){
