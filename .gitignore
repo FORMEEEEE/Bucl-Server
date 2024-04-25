@@ -40,4 +40,5 @@ out/
 application.yml
 application-cloud.yml
 application-local-config.yml
+settings.gradle
 

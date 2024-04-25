@@ -29,27 +29,27 @@ public class Reward extends TimestampMixin {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private User user;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Product product;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "consumer_order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private ConsumerOrder consumerOrder;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_refund_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private OrderRefund orderRefund;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reward_withdrawal_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private RewardWithdrawal rewardWithdrawal;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reward_withdrawal_account", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private RewardWithdrawalAccount rewardWithdrawalAccount;
 
