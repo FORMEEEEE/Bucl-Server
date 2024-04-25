@@ -2,6 +2,9 @@ package com.freeder.buclserver.app.auth.controller;
 
 
 
+import com.freeder.buclserver.app.auth.dto.request.AppleLoginRequest;
+import com.freeder.buclserver.app.auth.dto.response.AppleUserInfoResponse;
+import com.freeder.buclserver.global.util.TokenDecoder;
 import com.freeder.buclserver.global.webclient.KakaoApiClient;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +29,8 @@ import com.freeder.buclserver.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @RestController
@@ -48,6 +53,22 @@ public class AuthController {
 
 		UserDto userDto = myService.findBySocialIdAndDeletedAtIsNull(userInfo.getId())
 				.orElseGet(() -> myService.join(userInfo.toUserDto()));
+
+		TokenResponse tokens = jwtTokenService.createJwtTokens(userDto.id(), userDto.role());
+
+		response.addCookie(createCookie("access-token", tokens.accessToken(), COOKIE_MAX_AGE_ACCESS_TOKEN));
+		response.addCookie(createCookie("refresh-token", tokens.refreshToken(), COOKIE_MAX_AGE_REFRESH_TOKEN));
+
+		return new BaseResponse(null, HttpStatus.OK, "요청 성공");
+	}
+
+	@PostMapping("/login/apple")
+	public BaseResponse<?> appleLogin(@RequestBody AppleLoginRequest appleLoginRequest, HttpServletResponse response){
+
+		AppleUserInfoResponse appleUserDto = TokenDecoder.decodePayload(appleLoginRequest.token(), AppleUserInfoResponse.class);
+
+		UserDto userDto = myService.findBySocialIdAndDeletedAtIsNull(appleUserDto.getSub())
+				.orElseGet(() -> myService.join(appleUserDto.toUserDto()));
 
 		TokenResponse tokens = jwtTokenService.createJwtTokens(userDto.id(), userDto.role());
 
