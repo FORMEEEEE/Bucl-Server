@@ -2,6 +2,8 @@ package com.freeder.buclserver.app.orders;
 
 import java.util.List;
 
+import com.freeder.buclserver.domain.consumerorder.dto.TrackingNumDto;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +29,19 @@ public class OrdersController {
     private String testSocialId = "3895839289";
 
     private final OrdersService ordersService;
+
+    @GetMapping("/document/{product_id}")
+    public BaseResponse<?> getOrdersDocument(
+            @PathVariable(name = "product_id") Long productId
+    ) {
+        return ordersService.getOrdersDocument(productId);
+    }
+
+    @PutMapping("/document")
+    public BaseResponse<?> updateTrackingNum(@Valid @RequestBody List<TrackingNumDto> trackingNumDtos){
+        return ordersService.updateTrackingNum(trackingNumDtos);
+    }
+
 
     @GetMapping("/{orderCode}")
     public BaseResponse<OrderDetailDto> findOrderDetail(
