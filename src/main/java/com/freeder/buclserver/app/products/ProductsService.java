@@ -198,6 +198,7 @@ public class ProductsService {
             Object[] counts = productCommentRepository.getCounts(product.getId()).get(0);
 
             return new ProductDTO(
+                    product.getId(),
                     product.getProductCode(),
                     product.getName(),
                     product.getBrandName(),

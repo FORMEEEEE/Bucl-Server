@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.freeder.buclserver.global.response.BaseResponse;
+import com.freeder.buclserver.global.util.PageUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -93,10 +95,22 @@ public class ProductsReviewService {
 		}
 	}
 
+	public BaseResponse<?> getReviewTab(int page, int pageSize) {
+
+		List<ReviewDTO> list =
+				productReviewRepository.findAll(PageUtil.paging(page, pageSize)).getContent().stream()
+				.map(this::convertToReviewDTO)
+				.toList();
+
+		return new BaseResponse<>(list,HttpStatus.OK,"리뷰탭 조회 완료");
+	}
+
+
 	private ReviewDTO convertToReviewDTO(ProductReview review) {
 		try {
 			List<String> reviewUrls = imageParsing.getReviewUrl(review.getImagePath());
 			return new ReviewDTO(
+					review.getProductCode(),
 					review.getUser().getProfilePath(),
 					review.getUser().getNickname(),
 					review.getCreatedAt(),
@@ -109,6 +123,8 @@ public class ProductsReviewService {
 			throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, 500, "상품 리뷰 변환 - 서버 에러");
 		}
 	}
+
+
 
 	public static class ProductReviewResult {
 		private final long reviewCount;

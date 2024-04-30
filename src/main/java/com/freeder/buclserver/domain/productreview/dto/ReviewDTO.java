@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ReviewDTO {
+	private Long productCode;
 	private String profilePath;
 	private String nickname;
 	private LocalDateTime createdAt;

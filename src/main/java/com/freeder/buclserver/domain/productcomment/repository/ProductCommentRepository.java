@@ -18,4 +18,6 @@ public interface ProductCommentRepository extends JpaRepository<ProductComment,L
     @Query(value = "SELECT COUNT(*), IFNULL(SUM(CASE WHEN pc.suggestion = 1 THEN 1 ELSE 0 END), 0) FROM product_comment pc WHERE product_id = :productId", nativeQuery = true)
     List<Object[]> getCounts(long productId);
 
+    Optional<ProductComment> findFirstByProduct_IdAndUser_Id(Long productId, Long userId);
+
 }

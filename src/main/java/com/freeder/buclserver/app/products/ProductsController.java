@@ -52,7 +52,7 @@ public class ProductsController {
 	@Transactional(readOnly = true)
 	public BaseResponse<List<ProductDTO>> getProducts(
 			@RequestParam(defaultValue = "1") Long categoryId,
-			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "10") int pageSize
 	) {
 		Long userId = 1L;
@@ -77,6 +77,15 @@ public class ProductsController {
 	) {
 		List<ProductOptionDTO> productOptions = productsService.getProductOptions(productCode);
 		return new BaseResponse<>(productOptions, HttpStatus.OK, "옵션 요청 성공");
+	}
+
+	@GetMapping("/reviewstab")
+	@Transactional(readOnly = true)
+	public BaseResponse<?> getReviewTab(
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "5") int pageSize
+	){
+		return productsReviewService.getReviewTab(page,pageSize);
 	}
 
 	@GetMapping("/{product_code}/reviews")
@@ -120,12 +129,13 @@ public class ProductsController {
 	) {
 		Long userId = 1L;
 		List<String> s3ImageUrls = new ArrayList<>();
+
 		for (int i = 0; i < images.size(); i++) {
 			s3ImageUrls.add("assets/images/reviews/" + UUID.randomUUID() + ".png");
 		}
 
 		productsReviewService.createOrUpdateReview(productCode, reviewRequestDTO, userId, s3ImageUrls);
-		productsReviewService.uploadImagesToS3(images, s3ImageUrls);
+//		productsReviewService.uploadImagesToS3(images, s3ImageUrls);
 
 		return new BaseResponse<>("리뷰 생성 또는 수정 성공", HttpStatus.OK, "요청 성공");
 	}

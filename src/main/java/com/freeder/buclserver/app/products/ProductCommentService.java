@@ -61,11 +61,18 @@ public class ProductCommentService {
         ProductComment productComment =
                 ProductComment.setEntity(Long.valueOf(userDetails.getUserId()), saveComment);
 
+        Optional<ProductComment> notFirstComment =
+                productCommentRepository.findFirstByProduct_IdAndUser_Id(Long.valueOf(userDetails.getUserId()), productComment.getProduct().getId());
+
         ProductComment save = productCommentRepository.save(productComment);
 
-        Reward reward = saveReward(userDetails, saveComment);
+        Reward reward = null;
 
-        log.info("실시간 댓글 작성 성공 - 유저ID: {}, 댓글ID: {}, 리워드ID: {}", userDetails.getUserId(), save.getId(), reward.getId());
+        if (notFirstComment.isEmpty()) {
+            reward = saveReward(userDetails, saveComment);
+        }
+
+        log.info("실시간 댓글 작성 성공 - 유저ID: {}, 댓글ID: {}, 리워드ID: {}", userDetails.getUserId(), save.getId(), notFirstComment.isEmpty() ? reward.getId() : "이미받은유저");
 
         return new BaseResponse<>(null, HttpStatus.OK, "실시간댓글 저장성공.");
     }
@@ -77,6 +84,7 @@ public class ProductCommentService {
     /**
      * 직전 리워드 기록 검색후 로직처리<br>
      * ExceptionController에 예외처리 떠넘기는지 추적
+     *
      * @param userDetails
      * @param saveComment
      * @return Reward

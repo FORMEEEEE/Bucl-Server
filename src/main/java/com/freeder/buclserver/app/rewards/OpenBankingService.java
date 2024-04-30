@@ -1,10 +1,13 @@
 package com.freeder.buclserver.app.rewards;
 
+import com.freeder.buclserver.core.security.CustomUserDetails;
 import com.freeder.buclserver.domain.openbanking.dto.OpenBankingAccessTokenDto;
 import com.freeder.buclserver.domain.openbanking.dto.OpenBankingAccountValidDto;
 import com.freeder.buclserver.domain.openbanking.dto.ReqApiDto;
 import com.freeder.buclserver.domain.openbanking.entity.OpenBankingAccessToken;
 import com.freeder.buclserver.domain.openbanking.repository.AccessTokenRepository;
+import com.freeder.buclserver.domain.useraccount.entity.UserAccount;
+import com.freeder.buclserver.domain.useraccount.repository.UserAccountRepository;
 import com.freeder.buclserver.global.exception.BaseException;
 import com.freeder.buclserver.global.response.BaseResponse;
 import com.freeder.buclserver.global.webclient.OpenApiClient;
@@ -26,6 +29,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -34,6 +38,7 @@ import java.util.UUID;
 public class OpenBankingService {
 
     private final AccessTokenRepository accessTokenRepository;
+    private final UserAccountRepository userAccountRepository;
     private final OpenApiClient openApiClient;
 
     @Value("${openbanking.client_id}")
@@ -72,7 +77,7 @@ public class OpenBankingService {
     }
 
     @Transactional
-    public boolean requestOpenApiAccessToken(ReqApiDto reqApiDto) {
+    public boolean requestOpenApiAccessToken(CustomUserDetails userDetails, ReqApiDto reqApiDto) {
         try {
             RestTemplate rest = new RestTemplate();
             URI uri = URI.create(openBankingApiBaseUrl + "/oauth/2.0/token");
@@ -98,7 +103,7 @@ public class OpenBankingService {
                 OpenBankingAccountValidDto openBankingAccountValidDto =
                         openApiClient.accountValid(openBankingAccessTokenDto, reqApiDto);
 
-                return userValid(reqApiDto, openBankingAccountValidDto);
+                return userValid(userDetails, reqApiDto, openBankingAccountValidDto);
 
             } else {
                 OpenBankingAccessTokenDto openBankingAccessTokenDto;
@@ -117,7 +122,7 @@ public class OpenBankingService {
                 OpenBankingAccountValidDto openBankingAccountValidDto =
                         openApiClient.accountValid(openBankingAccessTokenDto, reqApiDto);
 
-                return userValid(reqApiDto, openBankingAccountValidDto);
+                return userValid(userDetails, reqApiDto, openBankingAccountValidDto);
             }
         } catch (Exception e) {
             throw new BaseException(HttpStatus.INTERNAL_SERVER_ERROR, 500, e.getMessage());
@@ -134,18 +139,40 @@ public class OpenBankingService {
         );
     }
 
+    /**
+     * 유저 검증 후 계좌내용 DB에 저장
+     * @param userDetails
+     * @param reqApiDto
+     * @param openBankingAccountValidDto
+     * @return 문제없으면 결과리턴
+     */
     private boolean userValid(
+            CustomUserDetails userDetails,
             ReqApiDto reqApiDto,
             OpenBankingAccountValidDto openBankingAccountValidDto
     ) {
-		if (!openBankingAccountValidDto.account_holder_name().equals(reqApiDto.name())){
+        if (!openBankingAccountValidDto.account_holder_name().equals(reqApiDto.name())){
             throw new BaseException(HttpStatus.BAD_REQUEST,400,"계좌 실명이 다릅니다.");
         }
         if (!openBankingAccountValidDto.account_holder_info().equals(reqApiDto.birth())){
             throw new BaseException(HttpStatus.BAD_REQUEST,400,"계좌 생년월일이 다릅니다.");
         }
 
+        Optional<UserAccount> userAccount = userAccountRepository.findById(Long.valueOf(userDetails.getUserId()));
+
+        if (userAccount.isEmpty()){
+            userAccountRepository.save(UserAccount.setEntity(userDetails, reqApiDto));
+            return true;
+        }
+
+        updateUserAccount(userAccount.get(),reqApiDto);
+
         return true;
+    }
+
+    private void updateUserAccount(UserAccount userAccount,ReqApiDto reqApiDto){
+        userAccount.setAccount(reqApiDto.account());
+        userAccount.setBankName(reqApiDto.bankNm());
     }
 
 }

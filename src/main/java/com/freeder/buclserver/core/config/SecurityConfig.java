@@ -42,6 +42,7 @@ public class SecurityConfig {
 						.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/v1/auth/login/kakao").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/v1/auth/renewal/tokens").permitAll()
+						.requestMatchers("/api/v1/token").permitAll()
 						.anyRequest().authenticated()
 				)
 				.exceptionHandling(exception -> exception

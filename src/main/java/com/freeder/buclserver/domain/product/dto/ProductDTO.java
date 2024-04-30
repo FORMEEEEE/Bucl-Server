@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ProductDTO {
+	private Long productId;
 	private Long productCode;
 	private String name;
 	private String brandName;
