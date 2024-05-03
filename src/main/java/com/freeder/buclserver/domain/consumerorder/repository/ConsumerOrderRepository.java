@@ -26,4 +26,6 @@ public interface ConsumerOrderRepository extends JpaRepository<ConsumerOrder, Lo
 
 
 	Optional<List<ConsumerOrder>> findByProduct_Id(Long productId);
+
+	List<ConsumerOrder> findByConsumerUserName(String name);
 }

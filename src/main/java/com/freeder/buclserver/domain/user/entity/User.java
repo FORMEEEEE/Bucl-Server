@@ -112,6 +112,9 @@ public class User extends TimestampMixin {
 	@Column(name = "refresh_token")
 	private String refreshToken; // refresh_token
 
+	@Column(name = "user_name")
+	private String userName;
+
 	@Builder
 	private User(
 		String email, String nickname, String profilePath, Boolean isAlarmed, String cellPhone,

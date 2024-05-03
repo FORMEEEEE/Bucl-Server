@@ -152,7 +152,7 @@ public class OrdersService {
         }
 
         shippingAddress.updateEntity(
-                shpAddrDto.getRecipientNam(),
+                shpAddrDto.getRecipientName(),
                 shpAddrDto.getZipCode(),
                 shpAddrDto.getAddress(),
                 shpAddrDto.getAddressDetail(),
@@ -329,4 +329,24 @@ public class OrdersService {
     }
 
 
+//    public BaseResponse<?> searchOrderByCustomer(
+//            String name,
+//            String phoneNumber) {
+//
+//        if (name != null && !name.isEmpty()) {
+//            List<ConsumerOrder> ordersByName = consumerOrderRepository.findByConsumer_Nickname(name); //차후 userName 생성
+//            if (ordersByName.isEmpty()) {
+//                return new BaseResponse<>(null, HttpStatus.NOT_FOUND, "name에 해당하는 주문을 찾을 수 없습니다: " + name);
+//            }
+//            else if (phoneNumber != null && !phoneNumber.isEmpty()) {
+//            List<ConsumerOrder> ordersByPhoneNumber = consumerOrderRepository.findByCustomer_PhoneNumber(phoneNumber);
+//            if (!ordersByPhoneNumber.isEmpty()) {
+//                return new BaseResponse<>(ordersByPhoneNumber, HttpStatus.OK, "phoneNumber에 해당하는 주문을 찾았습니다: " + phoneNumber);
+//            } else {
+//                return new BaseResponse<>(null, HttpStatus.NOT_FOUND, "phoneNumber에 해당하는 주문을 찾을 수 없습니다: " + phoneNumber);
+//            }
+//        } else {
+//            return new BaseResponse<>(null, HttpStatus.BAD_REQUEST, "이름 또는 전화번호를 입력하세요");
+//        }
+//    }
 }

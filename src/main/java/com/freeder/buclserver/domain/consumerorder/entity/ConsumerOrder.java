@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.freeder.buclserver.domain.consumerorder.vo.CsStatus;
@@ -16,11 +17,6 @@ import com.freeder.buclserver.domain.product.entity.Product;
 import com.freeder.buclserver.domain.shipping.entity.Shipping;
 import com.freeder.buclserver.domain.user.entity.User;
 import com.freeder.buclserver.global.mixin.TimestampMixin;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Entity
 @Table(name = "consumer_order")

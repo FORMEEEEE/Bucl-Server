@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class ShpAddrDto {
 	// 배송지
-	private String recipientNam;
+	private String recipientName;
 	private String contactNumber;
 	private String zipCode;
 	private String address;

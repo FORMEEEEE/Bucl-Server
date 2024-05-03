@@ -6,12 +6,8 @@ import com.freeder.buclserver.domain.consumerorder.dto.TrackingNumDto;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.freeder.buclserver.app.orders.dto.OrderDetailDto;
 import com.freeder.buclserver.app.orders.dto.OrderDto;
@@ -38,7 +34,7 @@ public class OrdersController {
     }
 
     @PutMapping("/document")
-    public BaseResponse<?> updateTrackingNum(@Valid @RequestBody List<TrackingNumDto> trackingNumDtos){
+    public BaseResponse<?> updateTrackingNum(@Valid @RequestBody List<TrackingNumDto> trackingNumDtos) {
         return ordersService.updateTrackingNum(trackingNumDtos);
     }
 
@@ -70,6 +66,9 @@ public class OrdersController {
         ordersService.updateOrderConfirmation(testSocialId, orderCode);
         return new BaseResponse<>(orderCode, HttpStatus.OK, orderCode + " 주문 확정 되었습니다.");
     }
+
+
+
 
     // @GetMapping("/tracking/{tracking_number}")
     // public BaseResponse<List<TrackingDetailDto>> findTrackingNumber(

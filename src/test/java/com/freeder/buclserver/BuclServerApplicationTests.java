@@ -3,6 +3,8 @@ package com.freeder.buclserver;
 import com.freeder.buclserver.app.affiliates.AffiliateService;
 import com.freeder.buclserver.app.auth.service.JwtTokenService;
 import com.freeder.buclserver.core.security.JwtTokenProvider;
+import com.freeder.buclserver.domain.consumerorder.entity.ConsumerOrder;
+import com.freeder.buclserver.domain.consumerorder.repository.ConsumerOrderRepository;
 import com.freeder.buclserver.domain.openbanking.vo.BANK_CODE;
 import com.freeder.buclserver.domain.product.entity.Product;
 import com.freeder.buclserver.domain.productcomment.dto.CommentsDto;
@@ -29,6 +31,7 @@ class BuclServerApplicationTests {
     @Autowired AffiliateService service;
     @Autowired CryptoAes256 cryptoAes256;
     @Autowired ProductCommentRepository productCommentRepository;
+    @Autowired ConsumerOrderRepository consumerOrderRepository;
 
     @Test
     void getToken() {
@@ -57,8 +60,7 @@ class BuclServerApplicationTests {
 
     @Test
     void random(){
-        if ("홍길동".equals("김말똥")){
-            System.out.println("aaaaa");
-        }
+        List<ConsumerOrder> 울보 = consumerOrderRepository.findByConsumerUserName("울보");
+        울보.forEach(consumerOrder -> System.out.println(consumerOrder.getConsumer().getUserName()));
     }
 }
