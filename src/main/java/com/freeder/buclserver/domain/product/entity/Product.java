@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.freeder.buclserver.domain.consumerorder.entity.ConsumerOrder;
+import com.freeder.buclserver.domain.productcomment.entity.ProductComment;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -33,10 +34,12 @@ public class Product extends TimestampMixin implements Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@ToString.Exclude
 	@JoinColumn(name = "product_category_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private ProductCategory productCategory;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@ToString.Exclude
 	@JoinColumn(name = "shipping_info_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private ShippingInfo shippingInfo;
 
@@ -54,6 +57,11 @@ public class Product extends TimestampMixin implements Serializable {
 	@ToString.Exclude
 	@Builder.Default
 	private List<ProductReview> productReviews = new ArrayList<>();
+
+	@OneToMany(mappedBy = "product")
+	@ToString.Exclude
+	@Builder.Default
+	private List<ProductComment> productComments = new ArrayList<>();
 
 	private String name;
 

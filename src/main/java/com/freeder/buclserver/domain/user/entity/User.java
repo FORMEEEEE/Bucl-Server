@@ -114,6 +114,9 @@ public class User extends TimestampMixin {
 	@Column(name = "user_name")
 	private String userName;
 
+	@Column(name = "business_reward_rate")
+	private float businessRewardRate;
+
 	@Builder
 	private User(
 		String email, String nickname, String profilePath, Boolean isAlarmed, String cellPhone,

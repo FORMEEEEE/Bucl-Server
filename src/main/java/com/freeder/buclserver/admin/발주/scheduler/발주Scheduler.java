@@ -18,8 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class 발주Scheduler {
-    @Value("{shpping.time}")
-    long targetTime;
+    @Value("${shipping.time}")
+    private long targetTime;
 
     private final ShippingRepository shippingRepository;
 

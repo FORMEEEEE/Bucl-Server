@@ -10,6 +10,9 @@ import com.freeder.buclserver.domain.consumerorder.repository.ConsumerOrderRepos
 import com.freeder.buclserver.domain.consumerorder.vo.CsStatus;
 import com.freeder.buclserver.domain.openbanking.vo.BANK_CODE;
 import com.freeder.buclserver.domain.product.entity.Product;
+import com.freeder.buclserver.domain.product.repository.ProductRepository;
+import com.freeder.buclserver.domain.productai.entity.ProductAi;
+import com.freeder.buclserver.domain.productai.repository.ProductAiRepository;
 import com.freeder.buclserver.domain.productcomment.dto.CommentsDto;
 import com.freeder.buclserver.domain.productcomment.entity.ProductComment;
 import com.freeder.buclserver.domain.productcomment.repository.ProductCommentRepository;
@@ -49,6 +52,10 @@ class BuclServerApplicationTests {
     ConsumerOrderRepository consumerOrderRepository;
     @Autowired
     ShippingRepository shippingRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    ProductAiRepository productAiRepository;
 
     @Test
     void getToken() {
@@ -108,6 +115,22 @@ class BuclServerApplicationTests {
         LocalDateTime 타겟일수 = LocalDateTime.now().minusDays(2);
         List<Shipping> 자동발송완료처리 = shippingRepository.자동발송완료처리(타겟일수);
 
+    }
+
+    @Test
+    @Transactional
+    void 상품에서상품댓글로(){
+        List<Product> all = productRepository.findAll();
+        all.forEach(product -> {
+            List<ProductComment> productComments = product.getProductComments();
+            productComments.forEach(System.out::println);
+        });
+    }
+
+    @Test
+    void ai(){
+        List<ProductAi> all = productAiRepository.findAll();
+        all.forEach(System.out::println);
     }
 
 

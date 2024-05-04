@@ -22,6 +22,7 @@ import static jakarta.persistence.FetchType.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class ProductComment extends TimestampMixin implements Serializable {
 
     @Id
@@ -31,10 +32,12 @@ public class ProductComment extends TimestampMixin implements Serializable {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @ToString.Exclude
     private User user;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @ToString.Exclude
     private Product product;
 
     @Enumerated(EnumType.STRING)
@@ -54,6 +57,14 @@ public class ProductComment extends TimestampMixin implements Serializable {
 
     @Column(name = "comment", length = 100)
     private String comment;
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public static ProductComment setEntity(Long userId, SaveComment saveComment) {
         User newUser = User.builder()

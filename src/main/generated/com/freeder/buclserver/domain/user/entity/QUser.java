@@ -26,6 +26,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final DateTimePath<java.time.LocalDateTime> birthDate = createDateTime("birthDate", java.time.LocalDateTime.class);
 
+    public final NumberPath<Float> businessRewardRate = createNumber("businessRewardRate", Float.class);
+
     public final StringPath cellPhone = createString("cellPhone");
 
     public final ListPath<com.freeder.buclserver.domain.consumerorder.entity.ConsumerOrder, com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder> consumerOrders = this.<com.freeder.buclserver.domain.consumerorder.entity.ConsumerOrder, com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder>createList("consumerOrders", com.freeder.buclserver.domain.consumerorder.entity.ConsumerOrder.class, com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder.class, PathInits.DIRECT2);

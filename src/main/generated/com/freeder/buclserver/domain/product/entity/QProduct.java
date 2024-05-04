@@ -62,6 +62,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final NumberPath<Long> productCode = createNumber("productCode", Long.class);
 
+    public final ListPath<com.freeder.buclserver.domain.productcomment.entity.ProductComment, com.freeder.buclserver.domain.productcomment.entity.QProductComment> productComments = this.<com.freeder.buclserver.domain.productcomment.entity.ProductComment, com.freeder.buclserver.domain.productcomment.entity.QProductComment>createList("productComments", com.freeder.buclserver.domain.productcomment.entity.ProductComment.class, com.freeder.buclserver.domain.productcomment.entity.QProductComment.class, PathInits.DIRECT2);
+
     public final ListPath<com.freeder.buclserver.domain.productoption.entity.ProductOption, com.freeder.buclserver.domain.productoption.entity.QProductOption> productOptions = this.<com.freeder.buclserver.domain.productoption.entity.ProductOption, com.freeder.buclserver.domain.productoption.entity.QProductOption>createList("productOptions", com.freeder.buclserver.domain.productoption.entity.ProductOption.class, com.freeder.buclserver.domain.productoption.entity.QProductOption.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> productPriority = createNumber("productPriority", Integer.class);

@@ -1,8 +1,11 @@
 package com.freeder.buclserver.app.products;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.freeder.buclserver.domain.productai.entity.ProductAi;
+import com.freeder.buclserver.domain.productai.repository.ProductAiRepository;
 import com.freeder.buclserver.domain.productcomment.repository.ProductCommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -42,6 +45,7 @@ public class ProductsService {
     private final WishRepository wishRepository;
     private final ImageParsing imageParsing;
     private final ProductCommentRepository productCommentRepository;
+    private final ProductAiRepository productAiRepository;
 
     @Transactional(readOnly = true)
     public List<ProductDTO> getProducts(Long categoryId, int page, int pageSize, Long userId) {
@@ -197,6 +201,8 @@ public class ProductsService {
 
             Object[] counts = productCommentRepository.getCounts(product.getId()).get(0);
 
+            Optional<ProductAi> byProductId = productAiRepository.findByProductId(product.getId());
+
             return new ProductDTO(
                     product.getId(),
                     product.getProductCode(),
@@ -208,7 +214,8 @@ public class ProductsService {
                     roundedReward,
                     wished,
                     counts[0],
-                    counts[1]
+                    counts[1],
+                    ProductDTO.convertDto(byProductId)
             );
         } catch (IllegalArgumentException e) {
             log.error("DTO 변환 중 잘못된 인자가 전달되었습니다.", e);
