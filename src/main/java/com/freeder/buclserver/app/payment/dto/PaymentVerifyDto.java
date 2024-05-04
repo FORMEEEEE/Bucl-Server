@@ -10,6 +10,7 @@ public class PaymentVerifyDto {
 	private int amount;
 
 	// 배송지 입력
+	private String cellPhone;
 	private String recipientName;
 	private String contactNum;
 	private String zipCode;

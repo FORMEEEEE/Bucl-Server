@@ -50,6 +50,9 @@ public class ConsumerPayment extends TimestampMixin {
 	@Column(name = "consumer_address")
 	private String consumerAddress;
 
+	@Column(name = "consumer_cellphone")
+	private String consumerCellphone;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "payment_status")
 	private PaymentStatus paymentStatus;

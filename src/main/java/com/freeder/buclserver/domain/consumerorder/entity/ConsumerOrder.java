@@ -24,41 +24,49 @@ import com.freeder.buclserver.global.mixin.TimestampMixin;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
+@ToString
 public class ConsumerOrder extends TimestampMixin {
 	@Id
 	@Column(name = "consumer_order_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "consumer_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@ToString.Exclude
 	private User consumer;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "business_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@ToString.Exclude
 	private User business;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@ToString.Exclude
 	private Product product;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "group_order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@ToString.Exclude
 	private GroupOrder groupOrder;
 
 	// spring boot 3.2.4 updateCode
 	@Builder.Default
 	@OneToMany(mappedBy = "consumerOrder")
+	@ToString.Exclude
 	private List<Shipping> shippings = new ArrayList<>();
 
 	// spring boot 3.2.4 updateCode
 	@Builder.Default
 	@OneToMany(mappedBy = "consumerOrder")
+	@ToString.Exclude
 	private List<ConsumerPayment> consumerPayments = new ArrayList<>();
 
 	// spring boot 3.2.4 updateCode
 	@Builder.Default
 	@OneToMany(mappedBy = "consumerOrder")
+	@ToString.Exclude
 	private List<ConsumerPurchaseOrder> consumerPurchaseOrders = new ArrayList<>();
 
 	@Column(name = "order_code", unique = true)
@@ -94,6 +102,34 @@ public class ConsumerOrder extends TimestampMixin {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "cs_status")
 	private CsStatus csStatus;
+
+	public void setConsumerPurchaseOrders(List<ConsumerPurchaseOrder> consumerPurchaseOrders) {
+		this.consumerPurchaseOrders = consumerPurchaseOrders;
+	}
+
+	public void setConsumerPayments(List<ConsumerPayment> consumerPayments) {
+		this.consumerPayments = consumerPayments;
+	}
+
+	public void setShippings(List<Shipping> shippings) {
+		this.shippings = shippings;
+	}
+
+	public void setGroupOrder(GroupOrder groupOrder) {
+		this.groupOrder = groupOrder;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public void setBusiness(User business) {
+		this.business = business;
+	}
+
+	public void setConsumer(User consumer) {
+		this.consumer = consumer;
+	}
 
 	public void setCsStatus(CsStatus csStatus) {
 		this.csStatus = csStatus;

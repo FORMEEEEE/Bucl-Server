@@ -26,6 +26,8 @@ public class QConsumerPayment extends EntityPathBase<ConsumerPayment> {
 
     public final StringPath consumerAddress = createString("consumerAddress");
 
+    public final StringPath consumerCellphone = createString("consumerCellphone");
+
     public final StringPath consumerEmail = createString("consumerEmail");
 
     public final StringPath consumerName = createString("consumerName");

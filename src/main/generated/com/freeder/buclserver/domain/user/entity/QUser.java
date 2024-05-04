@@ -69,6 +69,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final EnumPath<com.freeder.buclserver.domain.user.vo.UserGrade> userGrade = createEnum("userGrade", com.freeder.buclserver.domain.user.vo.UserGrade.class);
 
+    public final StringPath userName = createString("userName");
+
     public final EnumPath<com.freeder.buclserver.domain.user.vo.UserState> userState = createEnum("userState", com.freeder.buclserver.domain.user.vo.UserState.class);
 
     public final ListPath<com.freeder.buclserver.domain.wish.entity.Wish, com.freeder.buclserver.domain.wish.entity.QWish> wishes = this.<com.freeder.buclserver.domain.wish.entity.Wish, com.freeder.buclserver.domain.wish.entity.QWish>createList("wishes", com.freeder.buclserver.domain.wish.entity.Wish.class, com.freeder.buclserver.domain.wish.entity.QWish.class, PathInits.DIRECT2);

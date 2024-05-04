@@ -17,6 +17,6 @@ public class TokenController {
 
     @GetMapping("")
     public String getToken(){
-        return jwtTokenProvider.createAccessToken(1L, Role.ROLE_USER);
+        return jwtTokenProvider.createAccessToken(1L, Role.ROLE_ADMIN);
     }
 }

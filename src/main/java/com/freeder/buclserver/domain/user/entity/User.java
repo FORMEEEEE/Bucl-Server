@@ -27,7 +27,6 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @Getter
-@ToString
 @Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 // TODO: 필수 값 여부 확인

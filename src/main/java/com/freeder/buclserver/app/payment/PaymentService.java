@@ -87,7 +87,7 @@ public class PaymentService {
 
 	public void preparePayment(PaymentPrepareDto paymentPrepareDto) {
 		Product product = productRepository.findByProductCode(paymentPrepareDto.getProductCode())
-			.orElseThrow(() -> new BadRequestErrorException("상품이 등록되어있지 않아 구매할 수 없습니다."));
+				.orElseThrow(() -> new BadRequestErrorException("상품이 등록되어있지 않아 구매할 수 없습니다."));
 		// groupOrderRepository.findByProductAndIsEndedAndCreatedAtBetween(product, false,
 		// 		GroupOrderUtil.getStartGroupOrderDateTime(), GroupOrderUtil.getEndGroupOrderDateTime())
 		// 	.orElseThrow(() -> new BadRequestErrorException("현재 상품의 공동구매가 끝나서 구매를 할 수 없습니다."));
@@ -95,22 +95,22 @@ public class PaymentService {
 		ProductOptionDto productOption = paymentPrepareDto.getProductOption();
 
 		productOptionRepository.findByProductAndSkuCodeAndIsExposed(product, productOption.getSkuCode(), true)
-			.orElseThrow(() -> new BadRequestErrorException("선택하신 옵션은 해당 제품에는 없는 옵션입니다."));
+				.orElseThrow(() -> new BadRequestErrorException("선택하신 옵션은 해당 제품에는 없는 옵션입니다."));
 
 		PrepareData prepareData = new PrepareData(paymentPrepareDto.getMerchantUid(),
-			BigDecimal.valueOf(paymentPrepareDto.getAmount()));
+				BigDecimal.valueOf(paymentPrepareDto.getAmount()));
 		try {
 			iamportClient.postPrepare(prepareData);
 		} catch (Exception e) {
 			log.info(
-				"{\"status\":\"error\", \"msg\":\"" + e.getMessage() + "\", \"cause\":\"" + e.getMessage() + "\"}");
+					"{\"status\":\"error\", \"msg\":\"" + e.getMessage() + "\", \"cause\":\"" + e.getMessage() + "\"}");
 			throw new InternalServerErrorException("사전 검증 요청 실패");
 		}
 	}
 
 	@Transactional()
 	public IamportResponse<Payment> verifyPayment(String socialId,
-		PaymentVerifyDto paymentVerifyDto) throws NullPointerException {
+												  PaymentVerifyDto paymentVerifyDto) throws NullPointerException {
 		String impUid = paymentVerifyDto.getImpUid();
 		IamportResponse<Payment> irsp;
 		try {
@@ -118,21 +118,21 @@ public class PaymentService {
 		} catch (IamportResponseException | IOException e) {
 			cancelPayment(impUid);
 			log.info(
-				"{\"status\":\"error\", \"msg\":\"" + e.getMessage() + "\", \"cause\":\"" + e.getMessage() + "\"}");
+					"{\"status\":\"error\", \"msg\":\"" + e.getMessage() + "\", \"cause\":\"" + e.getMessage() + "\"}");
 			throw new InternalServerErrorException("포트원 결제 시스템에서 오류가 발생해서 결제가 취소 되었습니다.");
 		}
 
 		User user = userRepository.findBySocialId(socialId).orElseThrow(
-			() -> {
-				cancelPayment(impUid);
-				return new BadRequestErrorException("해당 유저가 없습니다.");
-			});
+				() -> {
+					cancelPayment(impUid);
+					return new BadRequestErrorException("해당 유저가 없습니다.");
+				});
 
 		Product product = productRepository.findByProductCode(paymentVerifyDto.getProductCode()).orElseThrow(
-			() -> {
-				cancelPayment(impUid);
-				return new BadRequestErrorException("해당 상품은 존재하지 않습니다.");
-			});
+				() -> {
+					cancelPayment(impUid);
+					return new BadRequestErrorException("해당 상품은 존재하지 않습니다.");
+				});
 
 		// GroupOrder groupOrder = groupOrderRepository.findByProductAndIsEndedAndCreatedAtBetween(product, false,
 		// 		GroupOrderUtil.getStartGroupOrderDateTime(), GroupOrderUtil.getEndGroupOrderDateTime())
@@ -142,14 +142,14 @@ public class PaymentService {
 		// 	});
 
 		ShippingInfo shippingInfo = Optional.ofNullable(product.getShippingInfo()).orElseThrow(
-			() -> {
-				cancelPayment(impUid);
-				log.info(
-					"{\"status\":\"error\", \"msg\":\"" + "not shippingInfo data" + "\", \"cause\":\""
-						+ "not shippingInfo data"
-						+ "\"}");
-				return new InternalServerErrorException("해당 상품에 대한 배송 정보가 없습니다.");
-			});
+				() -> {
+					cancelPayment(impUid);
+					log.info(
+							"{\"status\":\"error\", \"msg\":\"" + "not shippingInfo data" + "\", \"cause\":\""
+									+ "not shippingInfo data"
+									+ "\"}");
+					return new InternalServerErrorException("해당 상품에 대한 배송 정보가 없습니다.");
+				});
 
 		ProductOptionDto productOptionDto = paymentVerifyDto.getProductOption();
 
@@ -205,20 +205,20 @@ public class PaymentService {
 
 		} catch (Exception e) {
 			log.info(
-				"{\"status\":\"error\", \"msg\":\"" + e.getMessage() + "\", \"cause\":\"" + e.getMessage() + "\"}");
+					"{\"status\":\"error\", \"msg\":\"" + e.getMessage() + "\", \"cause\":\"" + e.getMessage() + "\"}");
 			// slack 으로 알림 가는 기능 필요.
 			throw new InternalServerErrorException("오류 내용: " + e.getMessage() + " 결제 취소 api 오류가 발생했습니다.");
 		}
 	}
 
 	public void verifyReward(User user, int rewardAmt,
-		String impUid) {
+							 String impUid) {
 		if (rewardAmt != 0) {
 			Reward userReward = rewardRepository.findFirstByUserOrderByCreatedAtDesc(user).orElseThrow(
-				() -> {
-					cancelPayment(impUid);
-					return new BadRequestErrorException("리워드를 받은 적이 한번도 없습니다.");
-				});
+					() -> {
+						cancelPayment(impUid);
+						return new BadRequestErrorException("리워드를 받은 적이 한번도 없습니다.");
+					});
 			int userCurrentRewardSum = userReward.getRewardSum();
 			if (userCurrentRewardSum < rewardAmt) {
 				cancelPayment(impUid);
@@ -228,17 +228,17 @@ public class PaymentService {
 	}
 
 	public int calcSpendAmount(
-		List<ProductOptionDto> productOptionDtos,
-		Product product, ShippingInfo shippingInfo, int rewardAmt) {
+			List<ProductOptionDto> productOptionDtos,
+			Product product, ShippingInfo shippingInfo, int rewardAmt) {
 		int totalAmount = 0;
 		int spendAmount;
 
 		for (ProductOptionDto productOptionDto : productOptionDtos) {
 			ProductOption productOption = productOptionRepository.findByProductAndSkuCodeAndIsExposed(
-					product, productOptionDto.getSkuCode(), true)
-				.orElseThrow();
+							product, productOptionDto.getSkuCode(), true)
+					.orElseThrow();
 			int optionAmount =
-				(product.getSalePrice() + productOption.getOptionExtraAmount()) * productOptionDto.getProductOrderQty();
+					(product.getSalePrice() + productOption.getOptionExtraAmount()) * productOptionDto.getProductOrderQty();
 			totalAmount += optionAmount;
 
 		}
@@ -250,19 +250,19 @@ public class PaymentService {
 	}
 
 	public int calcSpendAmount(
-		String impUid, ProductOptionDto productOptionDto,
-		Product product, ShippingInfo shippingInfo, int rewardAmt) {
+			String impUid, ProductOptionDto productOptionDto,
+			Product product, ShippingInfo shippingInfo, int rewardAmt) {
 
 		int spendAmount;
 
 		ProductOption productOption = productOptionRepository.findByProductAndSkuCodeAndIsExposed(
-				product, productOptionDto.getSkuCode(), true)
-			.orElseThrow(() -> {
-				cancelPayment(impUid);
-				return new BadRequestErrorException("선택하신 옵션은 해당 제품에는 없는 옵션입니다.");
-			});
+						product, productOptionDto.getSkuCode(), true)
+				.orElseThrow(() -> {
+					cancelPayment(impUid);
+					return new BadRequestErrorException("선택하신 옵션은 해당 제품에는 없는 옵션입니다.");
+				});
 		int totalAmount =
-			(product.getSalePrice() + productOption.getOptionExtraAmount()) * productOptionDto.getProductOrderQty();
+				(product.getSalePrice() + productOption.getOptionExtraAmount()) * productOptionDto.getProductOrderQty();
 		totalAmount += shippingInfo.getShippingFee();
 
 		spendAmount = totalAmount - rewardAmt;
@@ -271,108 +271,109 @@ public class PaymentService {
 	}
 
 	public ConsumerOrder createConsumerOrder(
-		User user, Product product, PaymentVerifyDto paymentVerifyDto) {
+			User user, Product product, PaymentVerifyDto paymentVerifyDto) {
 		ConsumerOrder order = ConsumerOrder
-			.builder()
-			.consumer(user)
-			.orderCode(paymentVerifyDto.getOrdCode())
-			.isConfirmed(false)
-			.isRewarded(false)
-			.totalOrderAmount(paymentVerifyDto.getTotalOrdAmt())
-			.spentAmount(paymentVerifyDto.getAmount())
-			.shippingFee(paymentVerifyDto.getShpFee())
-			.rewardUseAmount(paymentVerifyDto.getRewardAmt())
-			.orderStatus(OrderStatus.ORDERED)
-			.csStatus(CsStatus.NONE)
-			.product(product)
-			.build();
+				.builder()
+				.consumer(user)
+				.orderCode(paymentVerifyDto.getOrdCode())
+				.isConfirmed(false)
+				.isRewarded(false)
+				.totalOrderAmount(paymentVerifyDto.getTotalOrdAmt())
+				.spentAmount(paymentVerifyDto.getAmount())
+				.shippingFee(paymentVerifyDto.getShpFee())
+				.rewardUseAmount(paymentVerifyDto.getRewardAmt())
+				.orderStatus(OrderStatus.ORDERED)
+				.csStatus(CsStatus.NONE)
+				.product(product)
+				.build();
 		return consumerOrderRepository.save(order);
 	}
 
 	public void createConsumerPurchaseOrder(
-		ConsumerOrder consumerOrder,
-		Product product,
-		ProductOptionDto productOptionDto, String orderCode) {
+			ConsumerOrder consumerOrder,
+			Product product,
+			ProductOptionDto productOptionDto, String orderCode) {
 		ProductOption productOption = productOptionRepository.findByProductAndSkuCodeAndIsExposed(
-				product, productOptionDto.getSkuCode(), true)
-			.orElseThrow();
+						product, productOptionDto.getSkuCode(), true)
+				.orElseThrow();
 		ConsumerPurchaseOrder purchaseOrder = ConsumerPurchaseOrder
-			.builder()
-			.consumerOrder(consumerOrder)
-			.productOption(productOption)
-			.productOrderCode(orderCode)
-			.productAmount(productOptionDto.getProductOrderAmt())
-			.productOptionValue(productOption.getOptionValue())
-			.productOrderQty(productOptionDto.getProductOrderQty())
-			.productOrderAmount(productOptionDto.getProductOrderAmt() * productOptionDto.getProductOrderQty())
-			.build();
+				.builder()
+				.consumerOrder(consumerOrder)
+				.productOption(productOption)
+				.productOrderCode(orderCode)
+				.productAmount(productOptionDto.getProductOrderAmt())
+				.productOptionValue(productOption.getOptionValue())
+				.productOrderQty(productOptionDto.getProductOrderQty())
+				.productOrderAmount(productOptionDto.getProductOrderAmt() * productOptionDto.getProductOrderQty())
+				.build();
 		consumerPurchaseOrderRepository.save(purchaseOrder);
 	}
 
 	public void createSpentReward(User user, Product product,
-		ConsumerOrder consumerOrder, int rewardAmt, Reward userReward) {
+								  ConsumerOrder consumerOrder, int rewardAmt, Reward userReward) {
 		Reward spendReward = Reward
-			.builder()
-			.user(user)
-			.product(product)
-			.consumerOrder(consumerOrder)
-			.productName(product.getName())
-			.productBrandName(product.getBrandName())
-			.rewardType(RewardType.SPEND)
-			.spentRewardAmount(rewardAmt)
-			.previousRewardSum(userReward.getRewardSum())
-			.rewardSum(userReward.getRewardSum() - rewardAmt)
-			.build();
+				.builder()
+				.user(user)
+				.product(product)
+				.consumerOrder(consumerOrder)
+				.productName(product.getName())
+				.productBrandName(product.getBrandName())
+				.rewardType(RewardType.SPEND)
+				.spentRewardAmount(rewardAmt)
+				.previousRewardSum(userReward.getRewardSum())
+				.rewardSum(userReward.getRewardSum() - rewardAmt)
+				.build();
 
 		rewardRepository.save(spendReward);
 	}
 
 	public void createConsumerPayment(
-		User user, ConsumerOrder consumerOrder, PaymentVerifyDto paymentVerifyDto) {
+			User user, ConsumerOrder consumerOrder, PaymentVerifyDto paymentVerifyDto) {
 		ConsumerPayment consumerPayment = ConsumerPayment
-			.builder()
-			.consumerOrder(consumerOrder)
-			.pgTid(paymentVerifyDto.getPgTid())
-			.pgProvider(PgProvider.KAKAOPAY)
-			.paymentCode(paymentVerifyDto.getOrdCode())
-			.paymentAmount(paymentVerifyDto.getTotalOrdAmt())
-			.consumerName(paymentVerifyDto.getRecipientName())
-			.consumerEmail(user.getEmail())
-			.consumerAddress(paymentVerifyDto.getAddr() + " " + paymentVerifyDto.getAddrDetail())
-			.paymentStatus(PaymentStatus.PAID)
-			.paymentMethod(PaymentMethod.CARD)
-			.paidAt(LocalDateTime.now())
-			.build();
+				.builder()
+				.consumerOrder(consumerOrder)
+				.pgTid(paymentVerifyDto.getPgTid())
+				.pgProvider(PgProvider.KAKAOPAY)
+				.paymentCode(paymentVerifyDto.getOrdCode())
+				.paymentAmount(paymentVerifyDto.getTotalOrdAmt())
+				.consumerName(paymentVerifyDto.getRecipientName())
+				.consumerEmail(user.getEmail())
+				.consumerAddress(paymentVerifyDto.getAddr() + " " + paymentVerifyDto.getAddrDetail())
+				.consumerCellphone(paymentVerifyDto.getCellPhone())
+				.paymentStatus(PaymentStatus.PAID)
+				.paymentMethod(PaymentMethod.CARD)
+				.paidAt(LocalDateTime.now())
+				.build();
 
 		consumerPaymentRepository.save(consumerPayment);
 	}
 
 	public Shipping createShipping(
-		ConsumerOrder consumerOrder, ShippingInfo shippingInfo) {
+			ConsumerOrder consumerOrder, ShippingInfo shippingInfo) {
 		Shipping shipping = Shipping
-			.builder()
-			.consumerOrder(consumerOrder)
-			.shippingInfo(shippingInfo)
-			.shippingStatus(ShippingStatus.NOT_PROCESSING)
-			.isActive(true)
-			.build();
+				.builder()
+				.consumerOrder(consumerOrder)
+				.shippingInfo(shippingInfo)
+				.shippingStatus(ShippingStatus.NOT_PROCESSING)
+				.isActive(true)
+				.build();
 
 		return shippingRepository.save(shipping);
 	}
 
 	public void createShippingAddress(
-		User user, Shipping shipping, PaymentVerifyDto paymentVerifyDto) {
+			User user, Shipping shipping, PaymentVerifyDto paymentVerifyDto) {
 		ShippingAddress shippingAddress = ShippingAddress
-			.builder()
-			.shipping(shipping)
-			.user(user)
-			.recipientName(paymentVerifyDto.getRecipientName())
-			.zipCode(paymentVerifyDto.getZipCode())
-			.address(paymentVerifyDto.getAddr())
-			.addressDetail(paymentVerifyDto.getAddrDetail())
-			.contactNumber(paymentVerifyDto.getContactNum())
-			.memoContent(paymentVerifyDto.getMemoCnt())
-			.build();
+				.builder()
+				.shipping(shipping)
+				.user(user)
+				.recipientName(paymentVerifyDto.getRecipientName())
+				.zipCode(paymentVerifyDto.getZipCode())
+				.address(paymentVerifyDto.getAddr())
+				.addressDetail(paymentVerifyDto.getAddrDetail())
+				.contactNumber(paymentVerifyDto.getContactNum())
+				.memoContent(paymentVerifyDto.getMemoCnt())
+				.build();
 
 		shippingAddressRepository.save(shippingAddress);
 	}
