@@ -104,6 +104,8 @@ public class ProductsService {
                 wished = wishRepository.existsByUser_IdAndProduct_IdAndDeletedAtIsNull(userId, product.getId());
             }
 
+            Optional<ProductAi> byProductId = productAiRepository.findByProductId(product.getId());
+
             log.info("상품 상세 정보 조회 성공 - productCode: {}", productCode);
             return new ProductDetailDTO(
                     product.getProductCode(),
@@ -118,7 +120,8 @@ public class ProductsService {
                     firstFiveImages,
                     detailImages,
                     reviewPreviews,
-                    wished
+                    wished,
+                    ProductDetailDTO.convertDto(byProductId)
             );
         } catch (BaseException e) {
             throw new BaseException(e.getHttpStatus(), e.getErrorCode(), e.getErrorMessage());
@@ -201,8 +204,6 @@ public class ProductsService {
 
             Object[] counts = productCommentRepository.getCounts(product.getId()).get(0);
 
-            Optional<ProductAi> byProductId = productAiRepository.findByProductId(product.getId());
-
             return new ProductDTO(
                     product.getId(),
                     product.getProductCode(),
@@ -214,8 +215,7 @@ public class ProductsService {
                     roundedReward,
                     wished,
                     counts[0],
-                    counts[1],
-                    ProductDTO.convertDto(byProductId)
+                    counts[1]
             );
         } catch (IllegalArgumentException e) {
             log.error("DTO 변환 중 잘못된 인자가 전달되었습니다.", e);

@@ -29,7 +29,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class ProductCommentService {
-    private static final int REWARD_AMOUNT = 10;    //실시간댓글 리워드액수
 
     private final ProductCommentRepository productCommentRepository;
     private final RewardRepository rewardRepository;
@@ -116,10 +115,10 @@ public class ProductCommentService {
                 .productName(p.getName() + " 실시간댓글 리워드")
                 .productBrandName(p.getBrandName())
                 .rewardType(RewardType.CONSUMER)
-                .receivedRewardAmount(REWARD_AMOUNT)
+                .receivedRewardAmount(p.getCommentReward())
                 .spentRewardAmount(null)
                 .previousRewardSum(prevRewardSum)
-                .rewardSum(prevRewardSum + REWARD_AMOUNT)
+                .rewardSum(prevRewardSum + p.getCommentReward())
                 .build();
 
         return rewardRepository.save(reward);
