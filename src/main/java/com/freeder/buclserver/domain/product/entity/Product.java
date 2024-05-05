@@ -1,6 +1,7 @@
 package com.freeder.buclserver.domain.product.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +127,12 @@ public class Product extends TimestampMixin implements Serializable {
 
 	@Column(name = "sale_alternatives")
 	private String saleAlternatives;
+
+	private int commentReward;
+
+	private LocalDateTime deadline;
+
+	private long otherLowestPrice;
 
 	public List<ProductReview> getReviews() {
 		return productReviews;

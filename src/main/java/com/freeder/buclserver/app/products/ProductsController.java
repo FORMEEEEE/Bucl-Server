@@ -135,7 +135,7 @@ public class ProductsController {
 		}
 
 		productsReviewService.createOrUpdateReview(productCode, reviewRequestDTO, userId, s3ImageUrls);
-//		productsReviewService.uploadImagesToS3(images, s3ImageUrls);
+		productsReviewService.uploadImagesToS3(images, s3ImageUrls);
 
 		return new BaseResponse<>("리뷰 생성 또는 수정 성공", HttpStatus.OK, "요청 성공");
 	}

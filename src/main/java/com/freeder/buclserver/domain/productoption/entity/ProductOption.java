@@ -2,6 +2,7 @@ package com.freeder.buclserver.domain.productoption.entity;
 
 import jakarta.persistence.*;
 
+import lombok.Builder;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.freeder.buclserver.domain.product.entity.Product;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(name = "product_option")
 public class ProductOption extends TimestampMixin {
 	@Id

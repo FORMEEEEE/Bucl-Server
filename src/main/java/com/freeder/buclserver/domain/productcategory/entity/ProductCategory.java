@@ -8,13 +8,15 @@ import jakarta.persistence.*;
 import com.freeder.buclserver.domain.product.entity.Product;
 import com.freeder.buclserver.global.mixin.TimestampMixin;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(name = "product_category")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ProductCategory extends TimestampMixin {
 	@Id
 	@Column(name = "product_category_id")

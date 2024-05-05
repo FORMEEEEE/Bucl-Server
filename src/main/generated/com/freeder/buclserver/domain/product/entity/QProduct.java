@@ -28,6 +28,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final NumberPath<Float> businessRewardRate = createNumber("businessRewardRate", Float.class);
 
+    public final NumberPath<Integer> commentReward = createNumber("commentReward", Integer.class);
+
     public final ListPath<com.freeder.buclserver.domain.consumerorder.entity.ConsumerOrder, com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder> consumerOrders = this.<com.freeder.buclserver.domain.consumerorder.entity.ConsumerOrder, com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder>createList("consumerOrders", com.freeder.buclserver.domain.consumerorder.entity.ConsumerOrder.class, com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> consumerPrice = createNumber("consumerPrice", Integer.class);
@@ -36,6 +38,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
+
+    public final DateTimePath<java.time.LocalDateTime> deadline = createDateTime("deadline", java.time.LocalDateTime.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> deletedAt = _super.deletedAt;
@@ -57,6 +61,8 @@ public class QProduct extends EntityPathBase<Product> {
     public final NumberPath<Float> marginRate = createNumber("marginRate", Float.class);
 
     public final StringPath name = createString("name");
+
+    public final NumberPath<Long> otherLowestPrice = createNumber("otherLowestPrice", Long.class);
 
     public final com.freeder.buclserver.domain.productcategory.entity.QProductCategory productCategory;
 
