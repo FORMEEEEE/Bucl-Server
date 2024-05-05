@@ -4,7 +4,6 @@ import com.freeder.buclserver.admin.상품.dto.상품등록및수정Dto;
 import com.freeder.buclserver.admin.상품.dto.상품조회및수정시작화면Dto;
 import com.freeder.buclserver.app.products.ProductsReviewService;
 import com.freeder.buclserver.core.security.CustomUserDetails;
-import com.freeder.buclserver.domain.product.dto.ProductDTO;
 import com.freeder.buclserver.domain.product.entity.Product;
 import com.freeder.buclserver.domain.product.repository.ProductRepository;
 import com.freeder.buclserver.domain.productai.entity.ProductAi;
@@ -23,11 +22,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+
 import java.util.List;
 
 import static com.freeder.buclserver.admin.상품.dto.상품등록및수정Dto.*;
-import static com.freeder.buclserver.domain.product.dto.ProductDTO.*;
+import static com.freeder.buclserver.domain.product.dto.ProductDetailDTO.*;
 
 @Service
 @Slf4j

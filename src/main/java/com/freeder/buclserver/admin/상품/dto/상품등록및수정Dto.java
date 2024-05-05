@@ -1,6 +1,6 @@
 package com.freeder.buclserver.admin.상품.dto;
 
-import com.freeder.buclserver.app.payment.dto.ProductOptionDto;
+import com.freeder.buclserver.domain.product.dto.ProductDetailDTO;
 import com.freeder.buclserver.domain.product.vo.ProductStatus;
 import com.freeder.buclserver.domain.product.vo.TaxStatus;
 import com.freeder.buclserver.domain.productoption.vo.OptionKey;
@@ -8,7 +8,8 @@ import com.freeder.buclserver.domain.productoption.vo.OptionKey;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.freeder.buclserver.domain.product.dto.ProductDTO.*;
+import static com.freeder.buclserver.domain.product.dto.ProductDetailDTO.*;
+
 
 public record 상품등록및수정Dto(
         Long categoryId,
