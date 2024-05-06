@@ -24,7 +24,8 @@ import lombok.RequiredArgsConstructor;
 @Builder
 public class OrderCancel extends TimestampMixin {
 	@Id
-	@Column(name = "order_cancel_id", unique = true, nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "order_cancel_id")
 	private Long orderCancelId;
 
 	@ManyToOne(fetch = FetchType.LAZY)

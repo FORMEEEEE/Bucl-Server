@@ -56,8 +56,8 @@ public class OrderCancelsService {
     private final PaymentService paymentService;
 
     @Transactional
-    public OrderCancelResponseDto createOrderCancel(String socialId, String orderCode) throws NullPointerException {
-        User consumer = userRepository.findBySocialId(socialId).orElseThrow(
+    public OrderCancelResponseDto createOrderCancel(Long userId, String orderCode) throws NullPointerException {
+        User consumer = userRepository.findById(userId).orElseThrow(
                 () -> new UnauthorizedErrorException("인증 실패 했습니다.")
         );
         ConsumerOrder consumerOrder = consumerOrderRepository.findByOrderCodeAndConsumer(orderCode, consumer)
@@ -111,8 +111,8 @@ public class OrderCancelsService {
     }
 
     @Transactional
-    public void updateOrderCancelApproval(String socialId, String orderCode) {
-        User admin = userRepository.findBySocialId(socialId).orElseThrow(
+    public void updateOrderCancelApproval(Long userId, String orderCode) {
+        User admin = userRepository.findById(userId).orElseThrow(
                 () -> new UnauthorizedErrorException("인증 실패 했습니다.")
         );
         if (!admin.getRole().equals(Role.ROLE_ADMIN)) {

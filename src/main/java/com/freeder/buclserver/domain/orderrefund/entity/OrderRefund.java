@@ -15,8 +15,8 @@ import lombok.*;
 @Builder
 @Table(name = "order_refund")
 public class OrderRefund extends TimestampMixin {
-	@Id
-	@Column(name = "order_refund_id", unique = true, nullable = false)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "order_refund_id")
 	private Long id;
 
 	@Column(name = "refund_amount")
