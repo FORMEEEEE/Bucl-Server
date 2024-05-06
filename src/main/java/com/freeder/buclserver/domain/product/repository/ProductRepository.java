@@ -1,5 +1,6 @@
 package com.freeder.buclserver.domain.product.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -47,6 +48,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			"AND p.isExposed = true " +
 			"AND p.productStatus = com.freeder.buclserver.domain.product.vo.ProductStatus.ACTIVE")
 	Optional<Product> findAvailableProductByCode(@Param("productCode") Long productCode);
+
+	Optional<Page<Product>> findByDeletedAtIsNotNull(Pageable pageable);
 
 }
 

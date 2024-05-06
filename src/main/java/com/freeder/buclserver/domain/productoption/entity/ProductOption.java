@@ -2,21 +2,22 @@ package com.freeder.buclserver.domain.productoption.entity;
 
 import jakarta.persistence.*;
 
-import lombok.Builder;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import com.freeder.buclserver.domain.product.entity.Product;
 import com.freeder.buclserver.domain.productoption.vo.OptionKey;
 import com.freeder.buclserver.global.mixin.TimestampMixin;
-
-import lombok.Getter;
-import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @Setter
 @Builder
+@DynamicUpdate
 @Table(name = "product_option")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ProductOption extends TimestampMixin {
 	@Id
 	@Column(name = "production_option_id")
@@ -63,5 +64,8 @@ public class ProductOption extends TimestampMixin {
 
 	public Long getProductCode() {
 		return product.getProductCode();
+	}
+	public void setIsExposed(boolean isExposed){
+		this.isExposed = isExposed;
 	}
 }

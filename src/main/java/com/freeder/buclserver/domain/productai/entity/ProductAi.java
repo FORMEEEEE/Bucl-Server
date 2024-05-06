@@ -5,6 +5,7 @@ import com.freeder.buclserver.global.mixin.TimestampMixin;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicUpdate
 @Builder
 @ToString
 @Table(name = "product_ai")

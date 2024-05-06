@@ -84,8 +84,6 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final com.freeder.buclserver.domain.shippinginfo.entity.QShippingInfo shippingInfo;
 
-    public final StringPath skuCode = createString("skuCode");
-
     public final StringPath supplierName = createString("supplierName");
 
     public final NumberPath<Integer> supplyPrice = createNumber("supplyPrice", Integer.class);

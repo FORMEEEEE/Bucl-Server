@@ -35,7 +35,8 @@ public class ProductDetailDTO {
 	@Setter
 	@NoArgsConstructor
 	public static class ProductAiDto {
-		private float average;
+		private Long productAiId;
+		private Float average;
 		private String mdComment;
 		private String summary;
 		private Long totalCnt;
@@ -43,6 +44,7 @@ public class ProductDetailDTO {
 
 	public static ProductAiDto convertDto(Optional<ProductAi> productAi){
 		return productAi.map(ai -> new ProductAiDto(
+				null,
 				ai.getAverage(),
 				ai.getMdComment(),
 				ai.getSummary(),
