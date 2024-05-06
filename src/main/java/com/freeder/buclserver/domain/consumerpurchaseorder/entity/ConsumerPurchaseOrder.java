@@ -24,7 +24,7 @@ public class ConsumerPurchaseOrder extends TimestampMixin {
 	@JoinColumn(name = "consumer_order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private ConsumerOrder consumerOrder;
 
-	@ManyToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "group_order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private ProductOption productOption;
 
