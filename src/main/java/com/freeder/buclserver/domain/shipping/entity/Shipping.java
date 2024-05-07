@@ -20,6 +20,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @Builder
 @DynamicUpdate
+@ToString
 @Table(name = "shipping")
 public class Shipping extends TimestampMixin {
 	@Id
@@ -29,10 +30,12 @@ public class Shipping extends TimestampMixin {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "consumser_order_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@ToString.Exclude
 	private ConsumerOrder consumerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "shipping_info_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	@ToString.Exclude
 	private ShippingInfo shippingInfo;
 
 	@OneToOne(mappedBy = "shipping")

@@ -100,7 +100,7 @@ class BuclServerApplicationTests {
 
     @Test
     void 신규주문수() {
-        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기(ShippingStatus.IN_DELIVERY);
+        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기();
         주문수찾기.forEach(System.out::println);
     }
 

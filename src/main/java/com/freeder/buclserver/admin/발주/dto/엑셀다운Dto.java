@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -15,7 +16,6 @@ public class 엑셀다운Dto {
 
     private Long consumerOrderId;
     private Long productId;
-    private Long shippingId;
     private String productName;
     private String productOptionValue;
     private int productOrderQty;
@@ -24,8 +24,16 @@ public class 엑셀다운Dto {
     private String consumerName;
     private String consumerAddress;
     private String consumerCellphone;
-    private String shippingCoName;
-    private String trackingNum;
+    private List<엑셀다운배송Dto> shipping;
     private LocalDateTime createAt;
 
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @ToString
+    public static class 엑셀다운배송Dto{
+        private Long shippingId;
+        private String shippingCoName;
+        private String trackingNum;
+    }
 }

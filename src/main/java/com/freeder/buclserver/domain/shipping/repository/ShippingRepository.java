@@ -1,6 +1,7 @@
 package com.freeder.buclserver.domain.shipping.repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,6 @@ public interface ShippingRepository extends JpaRepository<Shipping, Long> {
 
 	@Query("select s from Shipping s left join fetch s.shippingAddress where s.shippingStatus = com.freeder.buclserver.domain.shipping.vo.ShippingStatus.IN_DELIVERY and s.trackingNumInputDate < :targetDate")
 	List<Shipping> 자동발송완료처리(LocalDateTime targetDate);
+
+	List<Shipping> findByConsumerOrder_IdInAndShippingStatus(List<Long> consumerOrderIds, ShippingStatus shippingStatus);
 }

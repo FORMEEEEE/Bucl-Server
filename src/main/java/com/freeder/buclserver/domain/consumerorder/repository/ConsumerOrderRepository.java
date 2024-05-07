@@ -45,7 +45,6 @@ public interface ConsumerOrderRepository extends JpaRepository<ConsumerOrder, Lo
     @Query("select new com.freeder.buclserver.admin.발주.dto.엑셀다운Dto(" +
             "co.id," +
             "p.id," +
-            "s.id," +
             "p.name," +
             "cpo.productOptionValue," +
             "cpo.productOrderQty," +
@@ -54,17 +53,16 @@ public interface ConsumerOrderRepository extends JpaRepository<ConsumerOrder, Lo
             "cp.consumerName," +
             "cp.consumerAddress," +
             "cp.consumerCellphone," +
-            "s.shippingCoName," +
-            "s.trackingNum," +
+            "null," +
             "co.createdAt" +
             ") " +
             "from ConsumerOrder co " +
-            "left join co.shippings s " +
             "left join co.product p " +
             "left join co.consumerPurchaseOrders cpo " +
             "left join co.consumerPayments cp " +
             "where co.isConfirmed = false " +
-            "and co.orderStatus = com.freeder.buclserver.domain.consumerorder.vo.OrderStatus.ORDERED " +
-            "and s.shippingStatus = :shippingStatus")
-    List<엑셀다운Dto> 주문수찾기(@Param("shippingStatus") ShippingStatus shippingStatus);
+            "and co.orderStatus = com.freeder.buclserver.domain.consumerorder.vo.OrderStatus.ORDERED ")
+    List<엑셀다운Dto> 주문수찾기();
+
+
 }

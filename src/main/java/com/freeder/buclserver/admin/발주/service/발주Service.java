@@ -2,6 +2,7 @@ package com.freeder.buclserver.admin.발주.service;
 
 import com.freeder.buclserver.admin.발주.dto.발주메인페이지Dto;
 import com.freeder.buclserver.admin.발주.dto.엑셀다운Dto;
+import com.freeder.buclserver.admin.발주.dto.엑셀다운Dto.엑셀다운배송Dto;
 import com.freeder.buclserver.admin.발주.dto.주문상태Dto;
 import com.freeder.buclserver.admin.발주.dto.주문상태Dto.엑셀업로드;
 import com.freeder.buclserver.core.security.CustomUserDetails;
@@ -19,8 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -37,11 +41,54 @@ public class 발주Service {
         return new BaseResponse<>(DTO로변환(발주메인페이지.get(0)), HttpStatus.OK, "조회완료");
     }
 
+    @Transactional(readOnly = true)
     public BaseResponse<?> 주문수조회(CustomUserDetails userDetails, ShippingStatus shippingStatus) {
         validRole(userDetails);
-        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기(shippingStatus);
+        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기();
+
+        List<Long> 주문ID들 = 주문수찾기.stream().map(엑셀다운Dto::getConsumerOrderId).toList();
+
+        List<Shipping> 주문된택배들 = shippingRepository.findByConsumerOrder_IdInAndShippingStatus(주문ID들, shippingStatus);
+
+        주문수찾기 = 주문수찾기.stream().peek(엑셀다운Dto -> {
+            List<엑셀다운배송Dto> 택배데이터 = 주문된택배들.stream()
+                    .filter(shipping -> Objects.equals(엑셀다운Dto.getConsumerOrderId(), shipping.getConsumerOrder().getId()))
+                    .map(shipping -> new 엑셀다운배송Dto(shipping.getId(), shipping.getShippingCoName(), shipping.getTrackingNum()))
+                    .toList();
+            엑셀다운Dto.setShipping(택배데이터);
+        }).filter(엑셀다운Dto -> !엑셀다운Dto.getShipping().isEmpty()
+        ).toList();
+
         return new BaseResponse<>(주문수찾기, HttpStatus.OK, "조회완료");
     }
+
+//    @Transactional(readOnly = true)
+//    public BaseResponse<?> 주문수조회(CustomUserDetails userDetails, ShippingStatus shippingStatus) {
+//        validRole(userDetails);
+//        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기();
+//
+//        List<Long> 주문ID들 = 주문수찾기.stream().map(엑셀다운Dto::getConsumerOrderId).toList();
+//
+//        List<Shipping> 주문된택배들 = shippingRepository.findByConsumerOrder_IdInAndShippingStatus(주문ID들, shippingStatus);
+//
+//        주문수찾기.forEach(엑셀다운Dto -> {
+//            List<엑셀다운배송Dto> 택배데이터 = new ArrayList<>();
+//            주문된택배들.forEach(shipping -> {
+//                if (Objects.equals(엑셀다운Dto.getConsumerOrderId(), shipping.getId())) {
+//                    택배데이터.add(
+//                            new 엑셀다운배송Dto(
+//                                    shipping.getId(),
+//                                    shipping.getShippingCoName(),
+//                                    shipping.getTrackingNum()
+//                            )
+//                    );
+//                }
+//            });
+//            엑셀다운Dto.setShipping(택배데이터);
+//        });
+//
+//        return new BaseResponse<>(주문수찾기, HttpStatus.OK, "조회완료");
+//    }
 
     @Transactional
     public BaseResponse<?> 주문상태업데이트(CustomUserDetails userDetails, 주문상태Dto 주문상태Dto) {
@@ -64,7 +111,7 @@ public class 발주Service {
                     shipping.setShippingCoName(엑셀업로드.getShippingCoName());
                     shipping.setTrackingNum(엑셀업로드.getTrackingNum());
                     shipping.setTrackingNumInputDate(LocalDateTime.now());
-                    배송상태업데이트(shipping,주문상태Dto);
+                    배송상태업데이트(shipping, 주문상태Dto);
                 }
             });
         });
