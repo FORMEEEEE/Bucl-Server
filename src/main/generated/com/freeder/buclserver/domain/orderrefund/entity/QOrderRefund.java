@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -17,11 +18,15 @@ public class QOrderRefund extends EntityPathBase<OrderRefund> {
 
     private static final long serialVersionUID = 1661881300L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QOrderRefund orderRefund = new QOrderRefund("orderRefund");
 
     public final com.freeder.buclserver.global.mixin.QTimestampMixin _super = new com.freeder.buclserver.global.mixin.QTimestampMixin(this);
 
     public final DateTimePath<java.time.LocalDateTime> completedAt = createDateTime("completedAt", java.time.LocalDateTime.class);
+
+    public final com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder consumerOrder;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
@@ -39,15 +44,24 @@ public class QOrderRefund extends EntityPathBase<OrderRefund> {
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public QOrderRefund(String variable) {
-        super(OrderRefund.class, forVariable(variable));
+        this(OrderRefund.class, forVariable(variable), INITS);
     }
 
     public QOrderRefund(Path<? extends OrderRefund> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QOrderRefund(PathMetadata metadata) {
-        super(OrderRefund.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QOrderRefund(PathMetadata metadata, PathInits inits) {
+        this(OrderRefund.class, metadata, inits);
+    }
+
+    public QOrderRefund(Class<? extends OrderRefund> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.consumerOrder = inits.isInitialized("consumerOrder") ? new com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder(forProperty("consumerOrder"), inits.get("consumerOrder")) : null;
     }
 
 }

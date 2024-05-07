@@ -88,13 +88,13 @@ public class OrderCancelsService {
                 .builder()
                 .refundAmount(refundAmount)
                 .rewardUseAmount(rewardUseAmount)
+                .consumerOrder(consumerOrder)
                 .build();
 
         OrderRefund newOrderRefund = orderRefundRepository.save(orderRefund);
         OrderCancel orderCancel = OrderCancel
                 .builder()
                 .user(consumer)
-                .orderCancelId(OrderCancelUtil.getOrderId())
                 .orderCancelExr(OrderCancelExr.USER)
                 .orderCancelStatus(OrderCancelStatus.RECEIVED)
                 .orderRefund(newOrderRefund)

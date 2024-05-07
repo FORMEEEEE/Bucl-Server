@@ -66,7 +66,7 @@ public class QOrderReturn extends EntityPathBase<OrderReturn> {
     public QOrderReturn(Class<? extends OrderReturn> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.consumerOrder = inits.isInitialized("consumerOrder") ? new com.freeder.buclserver.domain.consumerorder.entity.QConsumerOrder(forProperty("consumerOrder"), inits.get("consumerOrder")) : null;
-        this.orderRefund = inits.isInitialized("orderRefund") ? new com.freeder.buclserver.domain.orderrefund.entity.QOrderRefund(forProperty("orderRefund")) : null;
+        this.orderRefund = inits.isInitialized("orderRefund") ? new com.freeder.buclserver.domain.orderrefund.entity.QOrderRefund(forProperty("orderRefund"), inits.get("orderRefund")) : null;
     }
 
 }
