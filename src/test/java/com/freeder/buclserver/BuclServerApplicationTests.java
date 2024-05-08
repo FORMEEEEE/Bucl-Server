@@ -2,6 +2,7 @@ package com.freeder.buclserver;
 
 import com.freeder.buclserver.admin.발주.dto.발주메인페이지Dto;
 import com.freeder.buclserver.admin.발주.dto.엑셀다운Dto;
+import com.freeder.buclserver.admin.발주.dto.엑셀다운가공전Dto;
 import com.freeder.buclserver.app.affiliates.AffiliateService;
 import com.freeder.buclserver.app.auth.service.JwtTokenService;
 import com.freeder.buclserver.core.security.JwtTokenProvider;
@@ -30,10 +31,9 @@ import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class BuclServerApplicationTests {
@@ -100,8 +100,41 @@ class BuclServerApplicationTests {
 
     @Test
     void 신규주문수() {
-        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기();
+//        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기();
+//        주문수찾기.forEach(System.out::println);
+        List<엑셀다운가공전Dto> 주문수찾기 = consumerOrderRepository.주문수찾기(ShippingStatus.PROCESSING);
         주문수찾기.forEach(System.out::println);
+
+        List<엑셀다운Dto> 엑셀리스트 = 주문수찾기.stream()
+                .collect(Collectors.groupingBy(엑셀다운가공전Dto::getConsumerOrderId))
+                .entrySet().stream()
+                .map(entry -> {
+                    List<엑셀다운가공전Dto> groupedOrders = entry.getValue();
+                    엑셀다운가공전Dto representativeOrder = groupedOrders.get(0); // 대표 주문 정보를 가져온다.
+
+                    List<엑셀다운Dto.엑셀다운배송Dto> 배송리스트 = groupedOrders.stream()
+                            .map(order -> new 엑셀다운Dto.엑셀다운배송Dto(
+                                    order.getShippingId(),
+                                    order.getShippingCoName(),
+                                    order.getTrackingNum()))
+                            .collect(Collectors.toList());
+
+                    return new 엑셀다운Dto(
+                            representativeOrder.getConsumerOrderId(),
+                            representativeOrder.getProductId(),
+                            representativeOrder.getProductName(),
+                            representativeOrder.getProductOptionValue(),
+                            representativeOrder.getProductOrderQty(),
+                            representativeOrder.getRewardUseAmount(),
+                            representativeOrder.getTotalOrderAmount(),
+                            representativeOrder.getConsumerName(),
+                            representativeOrder.getConsumerAddress(),
+                            representativeOrder.getConsumerCellphone(),
+                            배송리스트,
+                            representativeOrder.getCreateAt()
+                    );
+                }).collect(Collectors.toList());
+        엑셀리스트.forEach(System.out::println);
     }
 
     @Test
@@ -119,7 +152,7 @@ class BuclServerApplicationTests {
 
     @Test
     @Transactional
-    void 상품에서상품댓글로(){
+    void 상품에서상품댓글로() {
         List<Product> all = productRepository.findAll();
         all.forEach(product -> {
             List<ProductComment> productComments = product.getProductComments();
@@ -128,10 +161,11 @@ class BuclServerApplicationTests {
     }
 
     @Test
-    void ai(){
+    void ai() {
         List<ProductAi> all = productAiRepository.findAll();
         all.forEach(System.out::println);
     }
 
+    /////////////////////////울보 테스트영역////////////////////////
 
 }

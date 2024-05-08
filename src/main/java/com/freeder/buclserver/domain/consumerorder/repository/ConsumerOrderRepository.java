@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.freeder.buclserver.admin.발주.dto.엑셀다운Dto;
+import com.freeder.buclserver.admin.발주.dto.엑셀다운가공전Dto;
 import com.freeder.buclserver.domain.shipping.vo.ShippingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +43,29 @@ public interface ConsumerOrderRepository extends JpaRepository<ConsumerOrder, Lo
             "where is_confirmed = 0 and order_status = 'ORDERED'", nativeQuery = true)
     List<Object[]> 발주메인페이지();
 
-    @Query("select new com.freeder.buclserver.admin.발주.dto.엑셀다운Dto(" +
+//    @Query("select new com.freeder.buclserver.admin.발주.dto.엑셀다운Dto(" +
+//            "co.id," +
+//            "p.id," +
+//            "p.name," +
+//            "cpo.productOptionValue," +
+//            "cpo.productOrderQty," +
+//            "co.rewardUseAmount," +
+//            "co.totalOrderAmount," +
+//            "cp.consumerName," +
+//            "cp.consumerAddress," +
+//            "cp.consumerCellphone," +
+//            "null," +
+//            "co.createdAt" +
+//            ") " +
+//            "from ConsumerOrder co " +
+//            "left join co.product p " +
+//            "left join co.consumerPurchaseOrders cpo " +
+//            "left join co.consumerPayments cp " +
+//            "where co.isConfirmed = false " +
+//            "and co.orderStatus = com.freeder.buclserver.domain.consumerorder.vo.OrderStatus.ORDERED ")
+//    List<엑셀다운Dto> 주문수찾기();
+
+    @Query("select new com.freeder.buclserver.admin.발주.dto.엑셀다운가공전Dto(" +
             "co.id," +
             "p.id," +
             "p.name," +
@@ -53,16 +76,20 @@ public interface ConsumerOrderRepository extends JpaRepository<ConsumerOrder, Lo
             "cp.consumerName," +
             "cp.consumerAddress," +
             "cp.consumerCellphone," +
-            "null," +
+            "s.id," +
+            "s.shippingCoName," +
+            "s.trackingNum," +
             "co.createdAt" +
             ") " +
             "from ConsumerOrder co " +
             "left join co.product p " +
+            "left join co.shippings s " +
             "left join co.consumerPurchaseOrders cpo " +
             "left join co.consumerPayments cp " +
             "where co.isConfirmed = false " +
-            "and co.orderStatus = com.freeder.buclserver.domain.consumerorder.vo.OrderStatus.ORDERED ")
-    List<엑셀다운Dto> 주문수찾기();
+            "and co.orderStatus = com.freeder.buclserver.domain.consumerorder.vo.OrderStatus.ORDERED " +
+            "and s.shippingStatus = :shippingStatus")
+    List<엑셀다운가공전Dto> 주문수찾기(ShippingStatus shippingStatus);
 
 
 }

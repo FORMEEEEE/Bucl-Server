@@ -3,6 +3,7 @@ package com.freeder.buclserver.admin.발주.service;
 import com.freeder.buclserver.admin.발주.dto.발주메인페이지Dto;
 import com.freeder.buclserver.admin.발주.dto.엑셀다운Dto;
 import com.freeder.buclserver.admin.발주.dto.엑셀다운Dto.엑셀다운배송Dto;
+import com.freeder.buclserver.admin.발주.dto.엑셀다운가공전Dto;
 import com.freeder.buclserver.admin.발주.dto.주문상태Dto;
 import com.freeder.buclserver.admin.발주.dto.주문상태Dto.엑셀업로드;
 import com.freeder.buclserver.core.security.CustomUserDetails;
@@ -44,51 +45,42 @@ public class 발주Service {
     @Transactional(readOnly = true)
     public BaseResponse<?> 주문수조회(CustomUserDetails userDetails, ShippingStatus shippingStatus) {
         validRole(userDetails);
-        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기();
 
-        List<Long> 주문ID들 = 주문수찾기.stream().map(엑셀다운Dto::getConsumerOrderId).toList();
+        List<엑셀다운가공전Dto> 주문수찾기 = consumerOrderRepository.주문수찾기(shippingStatus);
 
-        List<Shipping> 주문된택배들 = shippingRepository.findByConsumerOrder_IdInAndShippingStatus(주문ID들, shippingStatus);
+        List<엑셀다운Dto> 엑셀리스트 = 주문수찾기.stream()
+                .collect(Collectors.groupingBy(엑셀다운가공전Dto::getConsumerOrderId))
+                .entrySet().stream()
+                .map(entry -> {
+                    List<엑셀다운가공전Dto> groupedOrders = entry.getValue();
+                    엑셀다운가공전Dto representativeOrder = groupedOrders.get(0); // 대표 주문 정보를 가져온다.
 
-        주문수찾기 = 주문수찾기.stream().peek(엑셀다운Dto -> {
-            List<엑셀다운배송Dto> 택배데이터 = 주문된택배들.stream()
-                    .filter(shipping -> Objects.equals(엑셀다운Dto.getConsumerOrderId(), shipping.getConsumerOrder().getId()))
-                    .map(shipping -> new 엑셀다운배송Dto(shipping.getId(), shipping.getShippingCoName(), shipping.getTrackingNum()))
-                    .toList();
-            엑셀다운Dto.setShipping(택배데이터);
-        }).filter(엑셀다운Dto -> !엑셀다운Dto.getShipping().isEmpty()
-        ).toList();
+                    List<엑셀다운Dto.엑셀다운배송Dto> 배송리스트 = groupedOrders.stream()
+                            .map(order -> new 엑셀다운Dto.엑셀다운배송Dto(
+                                    order.getShippingId(),
+                                    order.getShippingCoName(),
+                                    order.getTrackingNum()))
+                            .toList();
 
-        return new BaseResponse<>(주문수찾기, HttpStatus.OK, "조회완료");
+                    return new 엑셀다운Dto(
+                            representativeOrder.getConsumerOrderId(),
+                            representativeOrder.getProductId(),
+                            representativeOrder.getProductName(),
+                            representativeOrder.getProductOptionValue(),
+                            representativeOrder.getProductOrderQty(),
+                            representativeOrder.getRewardUseAmount(),
+                            representativeOrder.getTotalOrderAmount(),
+                            representativeOrder.getConsumerName(),
+                            representativeOrder.getConsumerAddress(),
+                            representativeOrder.getConsumerCellphone(),
+                            배송리스트,
+                            representativeOrder.getCreateAt()
+                    );
+                }).toList();
+        엑셀리스트.forEach(System.out::println);
+
+        return new BaseResponse<>(엑셀리스트, HttpStatus.OK, "조회완료");
     }
-
-//    @Transactional(readOnly = true)
-//    public BaseResponse<?> 주문수조회(CustomUserDetails userDetails, ShippingStatus shippingStatus) {
-//        validRole(userDetails);
-//        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기();
-//
-//        List<Long> 주문ID들 = 주문수찾기.stream().map(엑셀다운Dto::getConsumerOrderId).toList();
-//
-//        List<Shipping> 주문된택배들 = shippingRepository.findByConsumerOrder_IdInAndShippingStatus(주문ID들, shippingStatus);
-//
-//        주문수찾기.forEach(엑셀다운Dto -> {
-//            List<엑셀다운배송Dto> 택배데이터 = new ArrayList<>();
-//            주문된택배들.forEach(shipping -> {
-//                if (Objects.equals(엑셀다운Dto.getConsumerOrderId(), shipping.getId())) {
-//                    택배데이터.add(
-//                            new 엑셀다운배송Dto(
-//                                    shipping.getId(),
-//                                    shipping.getShippingCoName(),
-//                                    shipping.getTrackingNum()
-//                            )
-//                    );
-//                }
-//            });
-//            엑셀다운Dto.setShipping(택배데이터);
-//        });
-//
-//        return new BaseResponse<>(주문수찾기, HttpStatus.OK, "조회완료");
-//    }
 
     @Transactional
     public BaseResponse<?> 주문상태업데이트(CustomUserDetails userDetails, 주문상태Dto 주문상태Dto) {
@@ -151,5 +143,28 @@ public class 발주Service {
             }
         }
     }
+
+    //////////////// OLD CODE///////////
+
+    //    @Transactional(readOnly = true)
+//    public BaseResponse<?> 주문수조회(CustomUserDetails userDetails, ShippingStatus shippingStatus) {
+//        validRole(userDetails);
+//        List<엑셀다운Dto> 주문수찾기 = consumerOrderRepository.주문수찾기(shippingStatus);
+//
+//        List<Long> 주문ID들 = 주문수찾기.stream().map(엑셀다운Dto::getConsumerOrderId).toList();
+//
+//        List<Shipping> 주문된택배들 = shippingRepository.findByConsumerOrder_IdInAndShippingStatus(주문ID들, shippingStatus);
+//
+//        주문수찾기 = 주문수찾기.stream().peek(엑셀다운Dto -> {
+//            List<엑셀다운배송Dto> 택배데이터 = 주문된택배들.stream()
+//                    .filter(shipping -> Objects.equals(엑셀다운Dto.getConsumerOrderId(), shipping.getConsumerOrder().getId()))
+//                    .map(shipping -> new 엑셀다운배송Dto(shipping.getId(), shipping.getShippingCoName(), shipping.getTrackingNum()))
+//                    .toList();
+//            엑셀다운Dto.setShipping(택배데이터);
+//        }).filter(엑셀다운Dto -> !엑셀다운Dto.getShipping().isEmpty()
+//        ).toList();
+//
+//        return new BaseResponse<>(주문수찾기, HttpStatus.OK, "조회완료");
+//    }
 
 }
