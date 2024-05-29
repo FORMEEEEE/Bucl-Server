@@ -30,6 +30,7 @@ public class UserAccount {
 
     private String account;
 
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     @JsonIgnore

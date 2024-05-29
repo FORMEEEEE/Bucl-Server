@@ -22,11 +22,14 @@ import com.freeder.buclserver.domain.wish.entity.Wish;
 import com.freeder.buclserver.global.mixin.TimestampMixin;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @Getter
+@Setter
+@DynamicUpdate
 @Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 // TODO: 필수 값 여부 확인

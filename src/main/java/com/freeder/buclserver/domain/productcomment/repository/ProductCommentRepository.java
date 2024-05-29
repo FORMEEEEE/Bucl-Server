@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface ProductCommentRepository extends JpaRepository<ProductComment,L
 
     Optional<ProductComment> findFirstByProduct_IdAndUser_Id(Long productId, Long userId);
 
+
+    Optional<Page<ProductComment>> findByCommentContaining(String realTimeComment, Pageable pageable);
 }

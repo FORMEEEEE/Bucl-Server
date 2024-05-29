@@ -63,7 +63,7 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
 	List<ProductReview> findByDeletedAtBefore(@Param("date") LocalDateTime date);
 
 
-
+	Optional<Page<ProductReview>> findByContentContaining(String review, Pageable pageable);
 }
 
 
